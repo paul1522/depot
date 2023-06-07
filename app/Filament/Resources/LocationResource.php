@@ -37,13 +37,13 @@ class LocationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('address1'),
-                Tables\Columns\TextColumn::make('address2'),
-                Tables\Columns\TextColumn::make('city'),
-                Tables\Columns\TextColumn::make('state'),
-                Tables\Columns\TextColumn::make('zip'),
-                Tables\Columns\TextColumn::make('sbt_loctid'),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('address1')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('address2')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('city')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('state')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('zip')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('sbt_loctid')->sortable()->searchable(),
                 // Tables\Columns\TextColumn::make('created_at')->dateTime(),
                 // Tables\Columns\TextColumn::make('updated_at')->dateTime(),
             ])

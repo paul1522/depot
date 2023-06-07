@@ -17,15 +17,14 @@ class ListLocations extends ListRecords
         return [
             Actions\Action::make('Import from icloct80')
                 ->action(function (): void {
-                    $this->importIciloc80();
+                    $this->importIcloct80();
                 })
                 ->requiresConfirmation(),
-
             Actions\CreateAction::make(),
         ];
     }
 
-    private function importIciloc80()
+    private function importIcloct80()
     {
         $icloct = DB::connection('basilisk')
             ->table('icloct80')
