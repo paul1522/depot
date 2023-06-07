@@ -21,27 +21,30 @@ class ShowCatalog extends Component implements HasTable
 
     protected function getTableQuery(): Builder
     {
-        return ItemLocation::query();
+        return ItemLocation::query()
+            ->where('quantity', '>', 0);
     }
 
     protected function getTableColumns(): array
     {
         return [
-            TextColumn::make('part_key')->label('Part')->sortable()->searchable(),
-            TextColumn::make('manufacturer')->sortable()->searchable(),
-            TextColumn::make('description')->sortable()->searchable(),
-            TextColumn::make('location')->sortable()->searchable(),
-            TextColumn::make('qty_on_hand'),
+            TextColumn::make('location.name')->label('Location')->sortable()->searchable(),
+            TextColumn::make('item.group')->label('Group')->sortable()->searchable(),
+            TextColumn::make('item.manufacturer')->label('Manufacturer')->sortable()->searchable(),
+            TextColumn::make('item.description')->label('Description')->sortable()->searchable(),
+            TextColumn::make('item.key')->label('Key')->sortable()->searchable(),
+            TextColumn::make('item.supplier_key')->label('Supplier Key')->sortable()->searchable(),
+            TextColumn::make('quantity')->sortable(),
         ];
     }
-
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return 'part_key';
-    }
-
-    protected function getTableRecordUrlUsing(): ?Closure
-    {
-        return fn (ItemLocation $record): string => route('product', ['product' => $record]);
-    }
+//
+//    protected function getDefaultTableSortColumn(): ?string
+//    {
+//        return 'key';
+//    }
+//
+//    protected function getTableRecordUrlUsing(): ?Closure
+//    {
+//        return fn (ItemLocation $record): string => route('product', ['product' => $record]);
+//    }
 }
