@@ -37,12 +37,12 @@ class ShowCatalog extends Component implements HasTable
             TextColumn::make('quantity')->sortable(),
         ];
     }
-//
+
 //    protected function getDefaultTableSortColumn(): ?string
 //    {
-//        return 'key';
+//        return 'item.key';
 //    }
-//
+
 //    protected function getTableRecordUrlUsing(): ?Closure
 //    {
 //        return fn (ItemLocation $record): string => route('product', ['product' => $record]);
