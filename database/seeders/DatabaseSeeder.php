@@ -14,10 +14,10 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserSeeder::class,
-            CharterItemSeeder::class,
-            //ItemSeeder::class,
-            //LocationSeeder::class,
-            //ItemLocationSeeder::class,
+            // CharterItemSeeder::class,
+            // ItemSeeder::class,
+            // LocationSeeder::class,
+            // ItemLocationSeeder::class,
         ]);
     }
 }
