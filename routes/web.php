@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Livewire\ShowCatalog;
+use App\Http\Livewire\ShowProduct;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,16 +15,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/', 'welcome');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::view('/cart', 'cart')->name('cart');
+    Route::get('/catalog', ShowCatalog::class)->name('catalog');
+    Route::view('/checkout', 'checkout')->name('checkout');
+    Route::view('/orders', 'orders')->name('orders');
+    Route::view('/reports', 'reports')->name('reports');
 });

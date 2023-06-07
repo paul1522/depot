@@ -1,66 +1,75 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Depot Program
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A custom inventory management system for MP Instrument Company.
 
-## About Laravel
+## About The Depot Program
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### The Service
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The client will deliver to MPI large quantities of used telecommunications equipment on an ongoing basis. MPI will 
+receive the equipment, catalog it, scrap what cannot be repaired or is obsolete, and warehouse the useful components.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Reports will be generated stating what was received from what locations, what was shelved, and what was scrapped.
 
-## Learning Laravel
+A web based catalog of equipment will be made available to the client. Through the web interface, the client can 
+requisition equipment that is to be configured, tested, and delivered according to the client's specifications. The 
+typical user will only be able to requisition equipment that was delivered from their location. Where possible, the 
+interface will use the client's part numbers and descriptions.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+To present the client with a concise and coherent user interface, bills of materials will be maintained for each type 
+of equipment that can be requisitioned. The bill of materials will serve as the "recipe" for assembling and configuring 
+a particular type of equipment. To keep the user interface as simple as possible, the use of check boxes and radio 
+buttons will be the preferred method of specifying the configuration and component options of the requisitioned 
+equipment.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Using primarily recovered components, MPI will assemble the requisitioned equipment, configure, test, and deliver it to 
+the client.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Reports will be generated stating what components were used, what equipment was requisitioned, how it was configured, 
+and where it was delivered.
 
-## Laravel Sponsors
+The catalog will also serve as a repository for technical documentation for the equipment and its components.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+###
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+###
 
-## Contributing
+Data will need to be exchanged with the SBT accounting and inventory system that MPI currently uses.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## What is in this repository
 
-## Code of Conduct
+This is a bare-bones partial implementation of the client facing web interface to the MPI Depot Program. You are free 
+to use or not use any, all, or none of this code as you see fit.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Frameworks used:
+  - Laravel Framework
+  - Laravel Jetstream
+  - Filament Admin Panel
+  - Livewire
+  - Tailwind CSS
 
-## Security Vulnerabilities
+## Install
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+git clone https://github.com/paul1522/depot.git
+cd depot
+composer install
+php artisan key:generate
+npm run dev
+sail up
+sail pest
+sail art migrate:fresh --seed
+browse http://localhost
+```
+
+## Deploy
+
+```
+./vendor/bin/envoy run init
+./vendor/bin/envoy run deploy
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
