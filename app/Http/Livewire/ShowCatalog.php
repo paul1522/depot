@@ -8,6 +8,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class ShowCatalog extends Component implements HasTable
@@ -21,10 +23,16 @@ class ShowCatalog extends Component implements HasTable
 
     protected function getTableQuery(): Builder
     {
+        /*
+         * select *
+         * from `item_locations`
+         * inner join `location_user` on `location_user`.`location_id` = `item_locations`.`location_id`
+         * where `quantity` > ?
+         * and `location_user`.`user_id` = ?
+         */
         return ItemLocation::query()
-            ->join('location_user', 'location_user.location_id', '=', 'item_locations.location_id')
             ->where('quantity', '>', 0)
-            ->where('location_user.user_id', '=', request()->user()->id);
+            ->whereRaw('location_id in (select location_id from location_user where user_id = '.request()->user()->id.')');
     }
 
     protected function getTableColumns(): array
@@ -39,6 +47,13 @@ class ShowCatalog extends Component implements HasTable
             TextColumn::make('quantity')->sortable(),
         ];
     }
+
+//    protected function paginateTableQuery(Builder $query): Paginator
+//    {
+//        $q =  $query->simplePaginate($this->getTableRecordsPerPage() == -1 ? $query->count() : $this->getTableRecordsPerPage());
+//        if ($this->page === 2) $q->dd();
+//        return $q;
+//    }
 
 //    protected function getDefaultTableSortColumn(): ?string
 //    {
