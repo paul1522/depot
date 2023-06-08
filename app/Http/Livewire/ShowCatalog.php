@@ -22,7 +22,9 @@ class ShowCatalog extends Component implements HasTable
     protected function getTableQuery(): Builder
     {
         return ItemLocation::query()
-            ->where('quantity', '>', 0);
+            ->join('location_user', 'location_user.location_id', '=', 'item_locations.location_id')
+            ->where('quantity', '>', 0)
+            ->where('location_user.user_id', '=', request()->user()->id);
     }
 
     protected function getTableColumns(): array

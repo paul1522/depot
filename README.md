@@ -6,7 +6,7 @@ A custom inventory management system for MP Instrument Company.
 
 ### The Service
 
-The client will deliver to MPI large quantities of used telecommunications equipment on an ongoing basis. MPI will 
+The client will deliver to MPI large quantities of used broadband equipment on an ongoing basis. MPI will 
 receive the equipment, catalog it, scrap what cannot be repaired or is obsolete, and warehouse the useful components.
 
 Reports will be generated stating what was received from what locations, what was shelved, and what was scrapped.
@@ -55,6 +55,8 @@ Frameworks used:
 git clone https://github.com/paul1522/depot.git
 cd depot
 composer install
+cp .env.example .env
+edit .env
 php artisan key:generate
 npm run dev
 sail up

@@ -49,7 +49,7 @@
                                     How it works:
                                 </p>
                                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                    The client will deliver to MPI large quantities of used telecommunications equipment on an ongoing basis. MPI will
+                                    The client will deliver to MPI large quantities of used broadband equipment on an ongoing basis. MPI will
                                     receive the equipment, catalog it, scrap what cannot be repaired or is obsolete, and warehouse the useful components.
                                 </p>
                                 <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
