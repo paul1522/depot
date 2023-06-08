@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('location_user', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('location_id');
-            $table->foreignId('user_id');
+            $table->foreignId('location_id')->constrained();
+            $table->foreignId('user_id')->constrained();
 
             $table->unique(['location_id', 'user_id']);
 

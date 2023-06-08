@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('bill_of_materials_headers', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('item_id')->unique();
+            $table->foreignId('item_id')->unique()->constrained();
 
             $table->timestamps();
         });

@@ -18,8 +18,8 @@ return new class extends Migration
             $table->integer('min_qty');
             $table->integer('max_qty');
 
-            $table->foreignId('item_id')->index();
-            $table->foreignId('bill_of_materials_header_id');
+            $table->foreignId('item_id')->constrained();
+            $table->foreignId('bill_of_materials_header_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();
         });
