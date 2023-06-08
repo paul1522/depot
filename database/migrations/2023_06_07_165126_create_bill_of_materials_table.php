@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bill_of_materials_details', function (Blueprint $table) {
+        Schema::create('bill_of_materials', function (Blueprint $table) {
             $table->id();
 
             $table->string('option_group')->index()->nullable();
@@ -19,7 +19,12 @@ return new class extends Migration
             $table->integer('max_qty');
 
             $table->foreignId('item_id')->constrained();
-            $table->foreignId('bill_of_materials_header_id')->constrained()->onDelete('cascade');
+            $table->foreignId('master_item_id');
+
+            $table->foreign('master_item_id')
+                ->references('id')
+                ->on('items')
+                ->cascadeOnDelete();
 
             $table->timestamps();
         });
@@ -30,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bill_of_materials_details');
+        Schema::dropIfExists('bill_of_materials');
     }
 };

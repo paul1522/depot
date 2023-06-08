@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BillOfMaterialsDetail extends Model
+class BillOfMaterials extends Model
 {
     protected static $unguarded = true;
 
-    public function header(): BelongsTo
+    public function masterItem(): BelongsTo
     {
-        return $this->belongsTo(BillOfMaterialsHeader::class);
+        return $this->belongsTo(Item::class);
     }
 
     public function item(): BelongsTo

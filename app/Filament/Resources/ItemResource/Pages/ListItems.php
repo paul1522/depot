@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ItemResource\Pages;
 
 use App\Filament\Resources\ItemResource;
+use App\Models\BillOfMaterials;
 use App\Models\CharterItem;
 use App\Models\Item;
 use Filament\Pages\Actions;
@@ -16,6 +17,11 @@ class ListItems extends ListRecords
     protected function getActions(): array
     {
         return [
+            Actions\Action::make('Import BOM from TTS')->label('Import BOM from TTS')
+                ->action(function (): void {
+                    $this->importBom();
+                })
+                ->requiresConfirmation(),
             Actions\Action::make('Import from iciloc80')
                 ->action(function (): void {
                     $this->importIciloc80();
@@ -25,7 +31,7 @@ class ListItems extends ListRecords
         ];
     }
 
-    private function importIciloc80()
+    private function importIciloc80(): void
     {
         $iciloc = DB::connection('basilisk')
             ->table('iciloc80')
@@ -86,5 +92,64 @@ class ListItems extends ListRecords
             ->first();
 
         return mb_ereg_replace(';[A-Z]+', '', $icmanu?->name ?? '---');
+    }
+
+
+
+
+
+    private function importBom(): void
+    {
+        foreach (Item::all() as $item) {
+            $this->importParts(
+                DB::connection('gluttony_2')
+                    ->table('web_ttsparts')
+                    ->where(DB::raw('regexp_replace(web_ttsparts.master_item, \'-.$\', \'\')'), '=', $item->sbt_item)
+                    ->get(),
+                $item
+            );
+        }
+    }
+
+    private function importParts(\Illuminate\Support\Collection $parts, Item $item): void
+    {
+        foreach ($parts as $part) {
+            $this->importPart($part, $item);
+        }
+    }
+
+    private function importPart(mixed $part, Item $item): void
+    {
+        $this->firstOrCreateDetail($part, $item);
+    }
+
+    private function firstOrCreateDetail(mixed $part, Item $masterItem): BillOfMaterials
+    {
+        $item = $this->firstOrCreateItem($part);
+        $attributes = [
+            'master_item_id' => $masterItem->id,
+            'item_id' => $item->id,
+        ];
+        $values = [
+            'min_qty' => 0,
+            'max_qty' => 1,
+        ];
+        return BillOfMaterials::firstOrCreate($attributes, $values);
+    }
+
+    private function firstOrCreateItem(mixed $part): Item
+    {
+        $sbtItem = mb_ereg_replace('-.$', '', $part->item);
+        $attributes = [
+            'sbt_item' => $sbtItem,
+        ];
+        $values = [
+            'description' => $part->description,
+            'group' => '----',
+            'key' => '----',
+            'manufacturer' => '----',
+            'supplier_key' => '----',
+        ];
+        return Item::firstOrCreate($attributes, $values);
     }
 }
