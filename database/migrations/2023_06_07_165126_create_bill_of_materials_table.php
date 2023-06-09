@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('min_qty');
             $table->integer('max_qty');
 
-            $table->foreignId('item_id')->constrained();
+            $table->foreignId('item_id')->constrained()->cascadeOnDelete();
             $table->foreignId('master_item_id');
 
             $table->foreign('master_item_id')

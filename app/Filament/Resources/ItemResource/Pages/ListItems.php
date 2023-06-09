@@ -8,6 +8,7 @@ use App\Models\CharterItem;
 use App\Models\Item;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ListItems extends ListRecords
@@ -39,7 +40,7 @@ class ListItems extends ListRecords
             ->get();
 
         foreach ($iciloc as $iloc) {
-            $sbtItem = mb_ereg_replace('-.$', '', $iloc->item);
+            $sbtItem = mb_ereg_replace('-.$', '', trim($iloc->item));
             $charterItem = $this->findCharterItem($sbtItem);
 
             $itemKey = [
@@ -101,7 +102,7 @@ class ListItems extends ListRecords
     private function importBom(): void
     {
         foreach (Item::all() as $item) {
-            $this->importParts(
+            $this->importTtsParts(
                 DB::connection('gluttony_2')
                     ->table('web_ttsparts')
                     ->where(DB::raw('regexp_replace(web_ttsparts.master_item, \'-.$\', \'\')'), '=', $item->sbt_item)
@@ -111,21 +112,22 @@ class ListItems extends ListRecords
         }
     }
 
-    private function importParts(\Illuminate\Support\Collection $parts, Item $item): void
+    private function importTtsParts(Collection $ttsParts, Item $item): void
     {
-        foreach ($parts as $part) {
-            $this->importPart($part, $item);
+        foreach ($ttsParts as $ttsPart) {
+            $this->importTtsPart($ttsPart, $item);
         }
     }
 
-    private function importPart(mixed $part, Item $item): void
+    private function importTtsPart(mixed $ttsPart, Item $item): void
     {
-        $this->firstOrCreateDetail($part, $item);
+        $this->firstOrCreateDetail($ttsPart, $item);
     }
 
-    private function firstOrCreateDetail(mixed $part, Item $masterItem): BillOfMaterials
+    private function firstOrCreateDetail(mixed $ttsPart, Item $masterItem): BillOfMaterials
     {
-        $item = $this->firstOrCreateItem($part);
+        $item = $this->firstOrCreateItem($ttsPart);
+        if ($item->id >= 389) dd($item);
         $attributes = [
             'master_item_id' => $masterItem->id,
             'item_id' => $item->id,
@@ -137,14 +139,14 @@ class ListItems extends ListRecords
         return BillOfMaterials::firstOrCreate($attributes, $values);
     }
 
-    private function firstOrCreateItem(mixed $part): Item
+    private function firstOrCreateItem(mixed $ttsPart): Item
     {
-        $sbtItem = mb_ereg_replace('-.$', '', $part->item);
+        $sbtItem = mb_ereg_replace('-.$', '', trim($ttsPart->item));
         $attributes = [
             'sbt_item' => $sbtItem,
         ];
         $values = [
-            'description' => $part->description,
+            'description' => $ttsPart->description,
             'group' => '----',
             'key' => '----',
             'manufacturer' => '----',
