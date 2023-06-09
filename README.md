@@ -43,11 +43,12 @@ This is a bare-bones partial implementation of the client facing web interface t
 to use or not use any, all, or none of this code as you see fit.
 
 Frameworks used:
-  - Laravel Framework
-  - Laravel Jetstream
-  - Filament Admin Panel
-  - Livewire
-  - Tailwind CSS
+  - [Laravel Framework](https://laravel.com/)
+  - [Laravel Jetstream](https://jetstream.laravel.com/)
+  - [Filament Admin Panel](https://filamentphp.com/)
+  - [Livewire](https://laravel-livewire.com/)
+  - [Tailwind CSS](https://tailwindcss.com/)
+  - [Daisy UI](https://daisyui.com/)
 
 ## Install
 
