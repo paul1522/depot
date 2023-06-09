@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Livewire\ShowCatalog;
-use App\Http\Livewire\ShowProduct;
+use App\Http\Livewire\ShowItem;
 use Illuminate\Support\Facades\Route;
+use App\Models\Item;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +24,9 @@ Route::middleware([
     'verified'
 ])->group(function () {
     Route::view('/cart', 'cart')->name('cart');
-    Route::get('/catalog', ShowCatalog::class)->name('catalog');
+    Route::get('/catalog', ShowCatalog::class)->name('catalog.show');
     Route::view('/checkout', 'checkout')->name('checkout');
+    Route::get('/item/{id}', ShowItem::class)->name('item.show');
     Route::view('/orders', 'orders')->name('orders');
     Route::view('/reports', 'reports')->name('reports');
 });

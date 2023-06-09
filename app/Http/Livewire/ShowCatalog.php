@@ -2,11 +2,14 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Item;
 use App\Models\ItemLocation;
+use Closure;
 use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
 class ShowCatalog extends Component implements HasTable
@@ -57,5 +60,10 @@ class ShowCatalog extends Component implements HasTable
             Tables\Filters\SelectFilter::make('location')
                 ->relationship('location', 'name'),
         ];
+    }
+
+    protected function getTableRecordUrlUsing(): ?Closure
+    {
+        return fn (ItemLocation $itemLocation): string => route('item.show', ['id' => $itemLocation->id]);
     }
 }

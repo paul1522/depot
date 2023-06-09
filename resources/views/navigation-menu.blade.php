@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:flex">
-                    <x-nav-link href="{{ route('catalog') }}" :active="request()->routeIs('catalog')">
+                    <x-nav-link href="{{ route('catalog.show') }}" :active="request()->routeIs('catalog.show')">
                         {{ __('Catalog') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('cart') }}" :active="request()->routeIs('cart')">
@@ -146,7 +146,7 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('catalog') }}" :active="request()->routeIs('catalog')">
+            <x-responsive-nav-link href="{{ route('catalog.show') }}" :active="request()->routeIs('catalog.show')">
                 {{ __('Catalog') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('cart') }}" :active="request()->routeIs('cart')">
