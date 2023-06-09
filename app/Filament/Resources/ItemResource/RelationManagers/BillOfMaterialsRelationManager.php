@@ -49,11 +49,11 @@ class BillOfMaterialsRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('item.sbt_item')->label('SBT Item'),
-                Tables\Columns\TextColumn::make('item.description')->label('Description'),
-                Tables\Columns\TextColumn::make('option_group'),
-                Tables\Columns\TextColumn::make('min_qty'),
-                Tables\Columns\TextColumn::make('max_qty'),
+                Tables\Columns\TextColumn::make('option_group')->sortable(),
+                Tables\Columns\TextColumn::make('item.sbt_item')->label('SBT Item')->sortable(),
+                Tables\Columns\TextColumn::make('item.description')->label('Description')->sortable(),
+                Tables\Columns\TextColumn::make('min_qty')->sortable(),
+                Tables\Columns\TextColumn::make('max_qty')->sortable(),
             ])
             ->filters([
                 //
