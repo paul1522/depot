@@ -26,12 +26,14 @@ class ListItemLocations extends ListRecords
         ];
     }
 
-    private function importIciloc80()
+    private function importIciloc80(): void
     {
         $iciloc = DB::connection('basilisk')
             ->table('iciloc80')
             ->where('loctid', 'like', 'CH/%')
             ->get();
+
+        ItemLocation::query()->update(['quantity' => 0]);
 
         foreach ($iciloc as $iloc) {
             $sbtItem = mb_ereg_replace('-.$', '', $iloc->item);
@@ -41,10 +43,12 @@ class ListItemLocations extends ListRecords
                 'location_id' => $this->getLocationId($iloc->loctid),
             ];
             $itemData = [
-                'quantity' => $iloc->lonhand,
+                'quantity' => 0,
             ];
 
-            ItemLocation::updateOrCreate($itemKey, $itemData);
+            $itemLocation = ItemLocation::firstOrCreate($itemKey, $itemData);
+            $itemLocation->quantity += $iloc->lonhand;
+            $itemLocation->save();
         }
     }
 
