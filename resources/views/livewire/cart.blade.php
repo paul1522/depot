@@ -6,6 +6,6 @@
     </x-slot>
 
     <x-page.content>
-        Shopping cart contents goes here.
+        {{ $this->table }}
     </x-page.content>
 </div>

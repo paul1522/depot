@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Livewire\CartShow;
+use App\Http\Livewire\ShowCart;
 use App\Http\Livewire\ShowCatalog;
 use App\Http\Livewire\ShowItem;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +24,7 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified'
 ])->group(function () {
-    Route::get('/cart', CartShow::class)->name('cart.show');
+    Route::get('/cart', ShowCart::class)->name('cart.show');
     Route::get('/catalog', ShowCatalog::class)->name('catalog.show');
     Route::view('/checkout', 'checkout')->name('checkout');
     Route::get('/item/{id}', ShowItem::class)->name('item.show');
