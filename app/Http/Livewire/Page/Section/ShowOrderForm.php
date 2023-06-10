@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Page\Section;
 
+use App\Models\BillOfMaterials;
+use App\Models\CartedItem;
 use App\Models\ItemLocation;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -19,9 +21,10 @@ class ShowOrderForm extends Component
         $this->backUrl = url()->previous();
         $this->input = [];
         $this->input['master']['checked'] = true;
-        $this->input['bom_group_prompts'] = [];
         $this->input['bom_items'] = [];
+        $this->input['bom_group_prompts'] = [];
         $this->input['bom_groups'] = [];
+        $this->input['bom_groups_values'] = [];
 
         if ($this->itemLocation->item->billOfMaterials->count() > 0) {
             foreach ($this->itemLocation->item->billOfMaterials->toQuery()->selectRaw('distinct option_group')->get() as $group_index => $optionGroup) {
@@ -53,21 +56,37 @@ class ShowOrderForm extends Component
     public function submit(): void
     {
         if ($this->input['master']['checked']) {
-            // add the master item to the cart
+            $this->addItemToCart($this->itemLocation->item->id);
         }
 
         foreach ($this->input['bom_items'] as $key => $value) {
             if ($value['checked']) {
-                // add the bom item to the cart
+                $this->addItemToCart(BillOfMaterials::find($key)->item->id);
             }
         }
 
-        foreach ($this->input['bom_group_values'] as $key => $value) {
+        foreach ($this->input['bom_groups_values'] as $key => $value) {
             if ($value) {
-                // add the bom group item to the card
+                $this->addItemToCart(BillOfMaterials::find($value)->item->id);
             }
         }
 
         $this->redirectRoute('cart.show');
+    }
+
+    private function addItemToCart(mixed $id)
+    {
+        $cartedItem = CartedItem::whereUserId(request()->user()->id)
+            ->whereItemId($id)->first();
+        if ($cartedItem) {
+            $cartedItem->quantity++;
+            $cartedItem->save();
+            return;
+        }
+        CartedItem::create([
+            'user_id' => request()->user()->id,
+            'item_id' => $id,
+            'quantity' => 1,
+        ]);
     }
 }
