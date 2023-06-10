@@ -14,7 +14,7 @@ Reports will be generated stating what was received from what locations, what wa
 A web based catalog of equipment will be made available to the client. Through the web interface, the client can 
 requisition equipment that is to be configured, tested, and delivered according to the client's specifications. The 
 typical user will only be able to requisition equipment that was delivered from their location. Where possible, the 
-interface will use the client's part numbers and descriptions.
+interface will use the client's part numbers, descriptions, and nomenclature.
 
 To present the client with a concise and coherent user interface, bills of materials will be maintained for each type 
 of equipment that can be requisitioned. The bill of materials will serve as the "recipe" for assembling and configuring 
