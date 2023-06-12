@@ -26,15 +26,15 @@ class ShowOrderForm extends Component
         $this->input['bom_groups'] = [];
         $this->input['bom_groups_values'] = [];
 
-        if ($this->itemLocation->item->billOfMaterials->count() > 0) {
-            foreach ($this->itemLocation->item->billOfMaterials->toQuery()->selectRaw('distinct option_group')->get() as $group_index => $optionGroup) {
+        if ($this->itemLocation->item->bill_of_materials->count() > 0) {
+            foreach ($this->itemLocation->item->bill_of_materials->toQuery()->selectRaw('distinct option_group')->get() as $group_index => $optionGroup) {
                 if ($optionGroup->option_group == null) {
-                    foreach ($this->itemLocation->item->billOfMaterials->whereNull('option_group') as $bom) {
+                    foreach ($this->itemLocation->item->bill_of_materials->whereNull('option_group') as $bom) {
                         $this->input['bom_items'][$bom->id]['checked'] = false;
                     }
                 } else {
                     $group = $optionGroup->option_group;
-                    foreach ($this->itemLocation->item->billOfMaterials->where('option_group', '=', $group) as $bom) {
+                    foreach ($this->itemLocation->item->bill_of_materials->where('option_group', '=', $group) as $bom) {
                         $this->input['bom_group_prompts'][$group_index] = $group;
                         $this->input['bom_groups'][$group_index][$bom->id]['checked'] = false;
                     }

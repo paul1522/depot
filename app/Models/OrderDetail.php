@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class BillOfMaterials extends Model
+class OrderDetail extends Model
 {
     protected static $unguarded = true;
-
-    public function master_item(): BelongsTo
-    {
-        return $this->belongsTo(Item::class);
-    }
 
     public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
+    }
+
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
     }
 }

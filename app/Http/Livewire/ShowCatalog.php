@@ -6,15 +6,13 @@ use App\Models\Item;
 use App\Models\ItemLocation;
 use Closure;
 use Filament\Tables;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
-class ShowCatalog extends Component implements HasTable
+class ShowCatalog extends Component implements Tables\Contracts\HasTable
 {
-    use InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable;
 
     public function render()
     {

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('description')->index();
             $table->string('group')->index()->nullable();
             $table->string('manufacturer')->index()->nullable();
-
             $table->string('sbt_item')->unique();
 
             $table->timestamps();

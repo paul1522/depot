@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('bill_of_materials', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
 
-            $table->string('option_group')->index()->nullable();
+            $table->string('status')->nullable()->index();
 
-            $table->foreignId('item_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('master_item_id');
-
-            $table->foreign('master_item_id')
-                ->references('id')
-                ->on('items')
-                ->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('ship_location_id');
 
             $table->timestamps();
+
+            $table->foreign('ship_location_id')
+                ->references('id')
+                ->on('locations')
+                ->cascadeOnDelete();
         });
     }
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bill_of_materials');
+        Schema::dropIfExists('orders');
     }
 };

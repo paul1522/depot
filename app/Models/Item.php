@@ -10,7 +10,7 @@ class Item extends Model
 {
     protected static $unguarded = true;
 
-    public function billOfMaterials(): HasMany
+    public function bill_of_materials(): HasMany
     {
         return $this->hasMany(BillOfMaterials::class, 'master_item_id');
     }

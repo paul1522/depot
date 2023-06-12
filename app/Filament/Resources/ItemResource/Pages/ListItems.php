@@ -124,17 +124,15 @@ class ListItems extends ListRecords
         $this->firstOrCreateDetail($ttsPart, $item);
     }
 
-    private function firstOrCreateDetail(mixed $ttsPart, Item $masterItem): BillOfMaterials
+    private function firstOrCreateDetail(mixed $ttsPart, Item $master_item): BillOfMaterials
     {
         $item = $this->firstOrCreateItem($ttsPart);
         if ($item->id >= 389) dd($item);
         $attributes = [
-            'master_item_id' => $masterItem->id,
+            'master_item_id' => $master_item->id,
             'item_id' => $item->id,
         ];
         $values = [
-            'min_qty' => 0,
-            'max_qty' => 1,
         ];
         return BillOfMaterials::firstOrCreate($attributes, $values);
     }

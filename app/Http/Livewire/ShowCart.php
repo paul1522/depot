@@ -4,15 +4,30 @@ namespace App\Http\Livewire;
 
 use App\Models\CartedItem;
 use App\Models\ItemLocation;
+use App\Models\Order;
+use App\Models\OrderDetail;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Filament\Tables;
+use Filament\Forms;
 
 class ShowCart extends Component implements HasTable
 {
     use InteractsWithTable;
+
+    public $shipTo = 0;
+    public $shipTos = [];
+
+    public $disabledConfirm = "disabled";
+
+    public function mount()
+    {
+        $this->shipTos = request()->user()->locations->pluck('name', 'id')->toArray();
+        $this->shipTo = 0;
+    }
+
     public function render()
     {
         return view('livewire.cart');
@@ -46,4 +61,22 @@ class ShowCart extends Component implements HasTable
         ];
     }
 
+    public function submit(): void
+    {
+        $order = Order::create([
+            'user_id' => request()->user()->id,
+            'ship_location_id' => $this->shipTo,
+        ]);
+
+        foreach (CartedItem::whereUserId(request()->user()->id)->get() as $cartedItem) {
+            OrderDetail::create([
+                'order_id' => $order->id,
+                'item_id' => $cartedItem->item->id,
+                'quantity_ordered' => $cartedItem->quantity,
+            ]);
+            $cartedItem->delete();
+        }
+
+        $this->redirect(route('order.show', ['id' => $order->id]));
+    }
 }

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('item_locations', function (Blueprint $table) {
             $table->id();
 
+            $table->integer('quantity')->index();
+
             $table->foreignId('location_id')->constrained();
             $table->foreignId('item_id')->constrained();
-            $table->integer('quantity')->index();
 
             $table->timestamps();
 
