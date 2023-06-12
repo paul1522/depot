@@ -37,14 +37,14 @@ class ShowOrder extends Component implements Tables\Contracts\HasTable
                     Forms\Components\TextInput::make('order.id')->label('Order #')->extraInputAttributes(['readonly' => 'readonly']),
                     Forms\Components\DatePicker::make('order.created_at')->label('Date')->disabled(),
                 ]),
-                Forms\Components\Fieldset::make('Ship to')->inlineLabel()->columns(1)->columnSpan(1)->schema([
-                    Forms\Components\TextInput::make('ship_to.name')->extraInputAttributes(['readonly' => 'readonly']),
-                    Forms\Components\TextInput::make('ship_to.address1')->extraInputAttributes(['readonly' => 'readonly']),
-                    Forms\Components\TextInput::make('ship_to.address2')->extraInputAttributes(['readonly' => 'readonly']),
+                Forms\Components\Fieldset::make('Ship to')->columns(1)->columnSpan(1)->schema([
+                    Forms\Components\TextInput::make('ship_to.name')->extraInputAttributes(['readonly' => 'readonly'])->label(''),
+                    Forms\Components\TextInput::make('ship_to.address1')->extraInputAttributes(['readonly' => 'readonly'])->label(''),
+                    Forms\Components\TextInput::make('ship_to.address2')->extraInputAttributes(['readonly' => 'readonly'])->label(''),
                     Forms\Components\Grid::make(4)->schema([
-                        Forms\Components\TextInput::make('ship_to.city')->extraInputAttributes(['readonly' => 'readonly'])->columnSpan(2),
-                        Forms\Components\TextInput::make('ship_to.state')->extraInputAttributes(['readonly' => 'readonly']),
-                        Forms\Components\TextInput::make('ship_to.zip')->extraInputAttributes(['readonly' => 'readonly']),
+                        Forms\Components\TextInput::make('ship_to.city')->extraInputAttributes(['readonly' => 'readonly'])->columnSpan(2)->label(''),
+                        Forms\Components\TextInput::make('ship_to.state')->extraInputAttributes(['readonly' => 'readonly'])->label(''),
+                        Forms\Components\TextInput::make('ship_to.zip')->extraInputAttributes(['readonly' => 'readonly'])->label(''),
                     ]),
                 ]),
             ]),
