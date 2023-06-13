@@ -8,6 +8,8 @@
     <x-page.content>
         <x-page.section><livewire:page.section.show-item-location :itemLocation="$itemLocation" /></x-page.section>
         <x-page.section><livewire:page.section.show-order-form :itemLocation="$itemLocation" /></x-page.section>
-        <x-page.section><livewire:page.section.show-documents :itemLocation="$itemLocation" /></x-page.section>
+        @if ($itemLocation->item->documents->count() > 0)
+            <x-page.section><livewire:page.section.show-documents :itemLocation="$itemLocation" /></x-page.section>
+        @endif
     </x-page.content>
 </div>

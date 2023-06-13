@@ -10,5 +10,5 @@
 
     </x-grid>
     </div>
-    <div class="basis-1/4">Product thumbnail will appear here.</div>
+    <div class="basis-1/4"><x-image-thumbnail :item="$itemLocation->item"></x-image-thumbnail></div>
 </div>

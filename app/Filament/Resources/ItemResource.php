@@ -31,6 +31,12 @@ class ItemResource extends Resource
                 Forms\Components\TextInput::make('group')->maxLength(255),
                 Forms\Components\TextInput::make('manufacturer')->maxLength(255),
                 Forms\Components\TextInput::make('sbt_item')->required()->maxLength(255),
+                Forms\Components\FileUpload::make('image_path')
+                    ->label('Upload product image')
+                    ->disk('public')
+                    ->directory('images')
+                    ->storeFileNamesIn('image_name')
+                    ->image(),
             ]);
     }
 
