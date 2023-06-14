@@ -6,7 +6,7 @@
         <x-form.string label="Supplier Key">{{ $itemLocation->item->supplier_key }}</x-form.string>
         <x-form.string label="Group">{{ $itemLocation->item->group }}</x-form.string>
         <x-form.string label="Manufacturer">{{ $itemLocation->item->manufacturer }}</x-form.string>
-        <x-form.string label="Quantity Available">{{ $itemLocation->quantity }}</x-form.string>
+        <x-form.string label="Quantity Available for {{ $itemLocation->location->name }}">{{ $itemLocation->quantity }}</x-form.string>
 
     </x-grid>
     </div>

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('group')->index()->nullable();
             $table->string('manufacturer')->index()->nullable();
             $table->string('sbt_item')->unique();
+            $table->string('image_path')->nullable();
+            $table->string('image_name')->nullable();
 
             $table->timestamps();
         });

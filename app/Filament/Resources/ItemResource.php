@@ -14,6 +14,8 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 
 class ItemResource extends Resource
 {
@@ -37,6 +39,10 @@ class ItemResource extends Resource
                     ->directory('images')
                     ->storeFileNamesIn('image_name')
                     ->image(),
+//                Forms\Components\Placeholder::make('image')->label('Image')->content(function (Item $record) {
+//                    // return $record->image_path;
+//                    return new HtmlString("<img class='object-contain' src='".Storage::url($record->image_path)."'/>");
+//                }),
             ]);
     }
 

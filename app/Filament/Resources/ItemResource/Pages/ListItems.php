@@ -5,11 +5,13 @@ namespace App\Filament\Resources\ItemResource\Pages;
 use App\Filament\Resources\ItemResource;
 use App\Models\BillOfMaterials;
 use App\Models\CharterItem;
+use App\Models\Document;
 use App\Models\Item;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ListItems extends ListRecords
 {
@@ -18,6 +20,16 @@ class ListItems extends ListRecords
     protected function getActions(): array
     {
         return [
+            Actions\Action::make('Import images from TTS')->label('Import images from TTS')
+                ->action(function (): void {
+                    $this->importImages();
+                })
+                ->requiresConfirmation(),
+            Actions\Action::make('Import documents from TTS')->label('Import documents from TTS')
+                ->action(function (): void {
+                    $this->importDocuments();
+                })
+                ->requiresConfirmation(),
             Actions\Action::make('Import BOM from TTS')->label('Import BOM from TTS')
                 ->action(function (): void {
                     $this->importBom();
@@ -151,5 +163,75 @@ class ListItems extends ListRecords
             'supplier_key' => '----',
         ];
         return Item::firstOrCreate($attributes, $values);
+    }
+
+    private function importImages(): void
+    {
+        $imgPath = '/var/www/html/storage/app/import/image';
+        $i = new \FilesystemIterator($imgPath, \FilesystemIterator::SKIP_DOTS);
+        foreach ($i as $fileInfo) {
+            $this->importFile($fileInfo);
+        }
+    }
+
+    public function importFile(\SplFileInfo $fileInfo): void
+    {
+        if (!$fileInfo->isFile()) return;
+        $mimeType = mime_content_type($fileInfo->getPathname());
+        if ('image/' !== mb_substr($mimeType, 0, 6)) return;
+        $this->importImage($fileInfo);
+    }
+
+    private function importImage(\SplFileInfo $fileInfo): void
+    {
+        $sourcePath = $fileInfo->getPathname();
+        $destinationPath = '/var/www/html/storage/app/public/images/' . $fileInfo->getFilename();
+        $sbt_item = mb_ereg_replace('\.[a-z]+$', '', $fileInfo->getFilename());
+        $item = Item::whereSbtItem($sbt_item)->first();
+        if (!$item) return;
+        if ($item->image_path) return;
+        if (!copy($sourcePath, $destinationPath)) return;
+        $item->image_path = 'images/' . $fileInfo->getFilename();
+        $item->image_name = $fileInfo->getFilename();
+        $item->save();
+    }
+
+    private function importDocuments(): void
+    {
+        $docPath = '/var/www/html/storage/app/import/doc';
+        $i = new \FilesystemIterator($docPath, \FilesystemIterator::SKIP_DOTS);
+        foreach ($i as $fileInfo) {
+            $this->importDir($fileInfo);
+        }
+    }
+
+    private function importDir(\SplFileInfo $fileInfo): void
+    {
+        if (!$fileInfo->isDir()) return;
+        $sbt_item = $fileInfo->getFilename();
+        $item = Item::whereSbtItem($sbt_item)->first();
+        if (!$item) return;
+        $i = new \FilesystemIterator($fileInfo->getPathname(), \FilesystemIterator::SKIP_DOTS);
+        foreach ($i as $fileInfo) {
+            $this->importDocFile($fileInfo, $item);
+        }
+    }
+
+    private function importDocFile(\SplFileInfo $fileInfo, Item $item)
+    {
+        if (!$fileInfo->isFile()) return;
+        $sourcePath = $fileInfo->getPathname();
+        $destinationDir = '/var/www/html/storage/app/public/documents/' . $item->sbt_item;
+        $destinationPath = '/var/www/html/storage/app/public/documents/' . $item->sbt_item . '/' . $fileInfo->getFilename();
+        if (!file_exists($destinationDir)) mkdir($destinationDir);
+        if (!copy($sourcePath, $destinationPath)) return;
+        $hash = hash_file('sha256', $destinationPath);
+        Document::firstOrCreate([
+            'item_id' => $item->id,
+            'hash' => $hash,
+        ], [
+            'title' => $fileInfo->getFilename(),
+            'path' => 'documents/' . $item->sbt_item . '/' . $fileInfo->getFilename(),
+        ]);
     }
 }
