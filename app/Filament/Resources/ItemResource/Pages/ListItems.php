@@ -167,7 +167,7 @@ class ListItems extends ListRecords
 
     private function importImages(): void
     {
-        $imgPath = '/var/www/html/storage/app/import/image';
+        $imgPath = storage_path() . '/app/import/image';
         $i = new \FilesystemIterator($imgPath, \FilesystemIterator::SKIP_DOTS);
         foreach ($i as $fileInfo) {
             $this->importFile($fileInfo);
@@ -185,7 +185,7 @@ class ListItems extends ListRecords
     private function importImage(\SplFileInfo $fileInfo): void
     {
         $sourcePath = $fileInfo->getPathname();
-        $destinationPath = '/var/www/html/storage/app/public/images/' . $fileInfo->getFilename();
+        $destinationPath = storage_path() . '/app/public/images/' . $fileInfo->getFilename();
         $sbt_item = mb_ereg_replace('\.[a-z]+$', '', $fileInfo->getFilename());
         $item = Item::whereSbtItem($sbt_item)->first();
         if (!$item) return;
@@ -198,7 +198,7 @@ class ListItems extends ListRecords
 
     private function importDocuments(): void
     {
-        $docPath = '/var/www/html/storage/app/import/doc';
+        $docPath = storage_path() . '/app/import/doc';
         $i = new \FilesystemIterator($docPath, \FilesystemIterator::SKIP_DOTS);
         foreach ($i as $fileInfo) {
             $this->importDir($fileInfo);
@@ -221,8 +221,8 @@ class ListItems extends ListRecords
     {
         if (!$fileInfo->isFile()) return;
         $sourcePath = $fileInfo->getPathname();
-        $destinationDir = '/var/www/html/storage/app/public/documents/' . $item->sbt_item;
-        $destinationPath = '/var/www/html/storage/app/public/documents/' . $item->sbt_item . '/' . $fileInfo->getFilename();
+        $destinationDir = storage_path() . '/app/public/documents/' . $item->sbt_item;
+        $destinationPath = storage_path() . '/app/public/documents/' . $item->sbt_item . '/' . $fileInfo->getFilename();
         if (!file_exists($destinationDir)) mkdir($destinationDir);
         if (!copy($sourcePath, $destinationPath)) return;
         $hash = hash_file('sha256', $destinationPath);
