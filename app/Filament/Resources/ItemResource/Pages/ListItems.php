@@ -66,7 +66,7 @@ class ListItems extends ListRecords
                 'manufacturer' => $this->getManufacturer($sbtItem),
             ];
 
-            Item::updateOrCreate($itemKey, $itemData);
+            Item::firstOrCreate($itemKey, $itemData);
         }
     }
 

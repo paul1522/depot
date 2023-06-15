@@ -32,15 +32,15 @@ class ListLocations extends ListRecords
             ->get();
 
         foreach ($icloct as $loct) {
-            Location::updateOrCreate([
-                'name' => $loct->locdesc,
+            Location::firstOrCreate([
+                'sbt_loctid' => $loct->loctid,
             ], [
+                'name' => $loct->locdesc,
                 'address1' => $loct->addrs1,
                 'address2' => $loct->addrs2,
                 'city' => $loct->city,
                 'state' => $loct->state,
                 'zip' => $loct->zip,
-                'sbt_loctid' => $loct->loctid,
             ]);
         }
     }

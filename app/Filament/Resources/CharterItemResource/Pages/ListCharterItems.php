@@ -39,7 +39,7 @@ class ListCharterItems extends ListRecords
         $firstLine = true;
         while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
             if (!$firstLine) {
-                CharterItem::updateOrCreate([
+                CharterItem::firstOrCreate([
                     'key' => $data['0']
                 ], [
                     'supplier_key' => $data['1'],
