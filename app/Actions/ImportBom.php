@@ -24,6 +24,7 @@ class ImportBom
             );
         }
     }
+
     private function importTtsParts(Collection $ttsParts, Item $item): void
     {
         foreach ($ttsParts as $ttsPart) {

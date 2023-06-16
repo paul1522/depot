@@ -38,6 +38,11 @@ class ShowCart extends Component implements HasTable
             ->where('user_id', '=', request()->user()->id);
     }
 
+    public function countCartedItems(): int
+    {
+        return $this->getTableQuery()->count();
+    }
+
     protected function getTableColumns(): array
     {
         return [
@@ -78,5 +83,10 @@ class ShowCart extends Component implements HasTable
         }
 
         $this->redirect(route('order.show', ['id' => $order->id]));
+    }
+
+    protected function getTableEmptyStateHeading(): ?string
+    {
+        return 'Your cart is empty';
     }
 }

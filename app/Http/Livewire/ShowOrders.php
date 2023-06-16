@@ -38,4 +38,9 @@ class ShowOrders extends Component implements Tables\Contracts\HasTable
             return route('order.show', ['id' => $record->id]);
         };
     }
+
+    protected function getTableEmptyStateHeading(): ?string
+    {
+        return 'No orders found';
+    }
 }
