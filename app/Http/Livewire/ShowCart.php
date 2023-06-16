@@ -66,6 +66,7 @@ class ShowCart extends Component implements HasTable
         $order = Order::create([
             'user_id' => request()->user()->id,
             'ship_location_id' => $this->shipTo,
+            'status' => 'Open',
         ]);
 
         foreach (CartedItem::whereUserId(request()->user()->id)->get() as $cartedItem) {
