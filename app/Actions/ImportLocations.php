@@ -18,7 +18,6 @@ class ImportLocations
             ->get();
 
         foreach ($icloct as $loct) {
-            dump($loct);
             Location::firstOrCreate([
                 'sbt_loctid' => $loct->loctid,
             ], [
