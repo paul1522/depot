@@ -23,7 +23,7 @@ class ImportLocations
             ], [
                 'name' => trim($loct->locdesc) != '' ? trim($loct->locdesc) : $loct->loctid,
                 'address1' => trim($loct->addrs1) != '' ? trim($loct->addrs1) : '---',
-                'address2' => trim($loct->addrs2) != '' ? trim($loct->addrs2) : '---',
+                'address2' => trim($loct->addrs2),
                 'city' => trim($loct->city) != '' ? trim($loct->city) : '---',
                 'state' => trim($loct->state) != '' ? trim($loct->state) : '---',
                 'zip' => trim($loct->zip) != '' ? trim($loct->zip) : '---',
