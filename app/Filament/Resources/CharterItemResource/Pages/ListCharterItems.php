@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\CharterItemResource\Pages;
 
+use App\Actions\ImportCharterItems;
 use App\Filament\Resources\CharterItemResource;
-use App\Models\CharterItem;
+use Exception;
 use Filament\Forms;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -13,10 +14,13 @@ class ListCharterItems extends ListRecords
 {
     protected static string $resource = CharterItemResource::class;
 
+    /**
+     * @throws Exception
+     */
     protected function getActions(): array
     {
         return [
-            Actions\Action::make('Import from file')
+            Actions\Action::make('Import')
                 ->action(function (array $data): void {
                     $this->importCsv($data['filename']);
                 })
@@ -31,26 +35,10 @@ class ListCharterItems extends ListRecords
         ];
     }
 
-    private function importCsv(mixed $filename)
+    private function importCsv(mixed $filename): void
     {
         $file = Storage::disk('local')->path($filename);
-        $csvFile = fopen($file, 'r');
-
-        $firstLine = true;
-        while (($data = fgetcsv($csvFile, 2000, ',')) !== false) {
-            if (! $firstLine) {
-                CharterItem::firstOrCreate([
-                    'key' => $data['0'],
-                ], [
-                    'supplier_key' => $data['1'],
-                    'description' => $data['2'],
-                    'group' => $data['3'],
-                ]);
-            }
-            $firstLine = false;
-        }
-
-        fclose($csvFile);
+        ImportCharterItems::run($file);
         unlink($file);
     }
 }
