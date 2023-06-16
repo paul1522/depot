@@ -35,8 +35,8 @@ class CharterItemResource extends Resource
                 Tables\Columns\TextColumn::make('supplier_key')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('description')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('group')->sortable()->searchable(),
-//                Tables\Columns\TextColumn::make('created_at')->dateTime(),
-//                Tables\Columns\TextColumn::make('updated_at')->dateTime(),
+                //                Tables\Columns\TextColumn::make('created_at')->dateTime(),
+                //                Tables\Columns\TextColumn::make('updated_at')->dateTime(),
             ])
             ->filters([
                 //

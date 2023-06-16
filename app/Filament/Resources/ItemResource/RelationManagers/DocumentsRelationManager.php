@@ -25,7 +25,7 @@ class DocumentsRelationManager extends RelationManager
                     ->disk('public')
                     ->directory('documents')
                     ->storeFileNamesIn('title')
-                    ->acceptedFileTypes(['application/pdf', 'image/*'])
+                    ->acceptedFileTypes(['application/pdf', 'image/*']),
             ])->columns(1);
     }
 

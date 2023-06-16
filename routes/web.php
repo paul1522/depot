@@ -1,13 +1,11 @@
 <?php
 
-use App\Http\Livewire\EditCart;
 use App\Http\Livewire\ShowCart;
 use App\Http\Livewire\ShowCatalog;
 use App\Http\Livewire\ShowItem;
 use App\Http\Livewire\ShowOrder;
 use App\Http\Livewire\ShowOrders;
 use Illuminate\Support\Facades\Route;
-use App\Models\Item;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +23,7 @@ Route::view('/', 'welcome');
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified'
+    'verified',
 ])->group(function () {
     Route::get('/cart', ShowCart::class)->name('cart.show');
     Route::get('/catalog', ShowCatalog::class)->name('catalog.show');

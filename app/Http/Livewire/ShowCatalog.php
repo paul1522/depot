@@ -7,7 +7,6 @@ use App\Models\ItemLocation;
 use Closure;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
 class ShowCatalog extends Component implements Tables\Contracts\HasTable

@@ -5,8 +5,8 @@ namespace App\Http\Livewire;
 use App\Models\Location;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use Filament\Tables;
 use Filament\Forms;
+use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
@@ -16,6 +16,7 @@ class ShowOrder extends Component implements Tables\Contracts\HasTable
     use Forms\Concerns\InteractsWithForms;
 
     public Order $order;
+
     public Location $ship_to;
 
     public function mount($id)
@@ -64,5 +65,4 @@ class ShowOrder extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('quantity_shipped')->label('Qty Shipped'),
         ];
     }
-
 }

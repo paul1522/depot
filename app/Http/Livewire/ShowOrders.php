@@ -4,9 +4,9 @@ namespace App\Http\Livewire;
 
 use App\Models\Order;
 use Closure;
+use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
-use Filament\Tables;
 
 class ShowOrders extends Component implements Tables\Contracts\HasTable
 {

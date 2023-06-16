@@ -3,24 +3,23 @@
 namespace App\Http\Livewire;
 
 use App\Models\CartedItem;
-use App\Models\ItemLocation;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
-use Filament\Tables;
-use Filament\Forms;
 
 class ShowCart extends Component implements HasTable
 {
     use InteractsWithTable;
 
     public $shipTo = 0;
+
     public $shipTos = [];
 
-    public $disabledConfirm = "disabled";
+    public $disabledConfirm = 'disabled';
 
     public function mount()
     {

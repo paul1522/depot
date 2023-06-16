@@ -8,8 +8,6 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BillOfMaterialsRelationManager extends RelationManager
 {
@@ -34,14 +32,14 @@ class BillOfMaterialsRelationManager extends RelationManager
                     }),
                 Forms\Components\TextInput::make('option_group')
                     ->maxLength(255),
-//                Forms\Components\TextInput::make('min_qty')->default(0)
-//                    ->integer()
-//                    ->minValue(0)
-//                    ->required(),
-//                Forms\Components\TextInput::make('max_qty')->default(1)
-//                    ->integer()
-//                    ->minValue(1)
-//                    ->required(),
+                //                Forms\Components\TextInput::make('min_qty')->default(0)
+                //                    ->integer()
+                //                    ->minValue(0)
+                //                    ->required(),
+                //                Forms\Components\TextInput::make('max_qty')->default(1)
+                //                    ->integer()
+                //                    ->minValue(1)
+                //                    ->required(),
             ]);
     }
 
@@ -52,8 +50,8 @@ class BillOfMaterialsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('option_group')->sortable(),
                 Tables\Columns\TextColumn::make('item.sbt_item')->label('SBT Item')->sortable(),
                 Tables\Columns\TextColumn::make('item.description')->label('Description')->sortable(),
-//                Tables\Columns\TextColumn::make('min_qty')->sortable(),
-//                Tables\Columns\TextColumn::make('max_qty')->sortable(),
+                //                Tables\Columns\TextColumn::make('min_qty')->sortable(),
+                //                Tables\Columns\TextColumn::make('max_qty')->sortable(),
             ])
             ->filters([
                 //

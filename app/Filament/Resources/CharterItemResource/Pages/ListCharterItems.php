@@ -25,7 +25,7 @@ class ListCharterItems extends ListRecords
                         ->disk('local')
                         ->directory('private')
                         ->required()
-                        ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel'])
+                        ->acceptedFileTypes(['text/csv', 'application/vnd.ms-excel']),
                 ]),
             Actions\CreateAction::make(),
         ];
@@ -37,10 +37,10 @@ class ListCharterItems extends ListRecords
         $csvFile = fopen($file, 'r');
 
         $firstLine = true;
-        while (($data = fgetcsv($csvFile, 2000, ",")) !== FALSE) {
-            if (!$firstLine) {
+        while (($data = fgetcsv($csvFile, 2000, ',')) !== false) {
+            if (! $firstLine) {
                 CharterItem::firstOrCreate([
-                    'key' => $data['0']
+                    'key' => $data['0'],
                 ], [
                     'supplier_key' => $data['1'],
                     'description' => $data['2'],

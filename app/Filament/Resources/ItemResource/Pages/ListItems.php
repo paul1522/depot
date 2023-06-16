@@ -11,7 +11,6 @@ use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 
 class ListItems extends ListRecords
 {
@@ -59,7 +58,7 @@ class ListItems extends ListRecords
                 'sbt_item' => $sbtItem,
             ];
             $itemData = [
-                'key' => $charterItem?->key ??  '---',
+                'key' => $charterItem?->key ?? '---',
                 'supplier_key' => $charterItem->supplier_key ?? '---',
                 'description' => $charterItem->description ?? $this->getItmdesc($sbtItem),
                 'group' => $charterItem->group ?? '---',
@@ -72,7 +71,7 @@ class ListItems extends ListRecords
 
     private function findCharterItem(string $sbtItem): ?CharterItem
     {
-        $itemRegexp = '^' . $sbtItem . '(-.)?$';
+        $itemRegexp = '^'.$sbtItem.'(-.)?$';
         $icsupl = DB::connection('basilisk')
             ->table('icsupl80')
             ->where('vpartno', 'regexp', '^1[0-9]{6}$')
@@ -81,9 +80,10 @@ class ListItems extends ListRecords
             ->orderBy('item')
             ->first();
 
-        if ($icsupl){
+        if ($icsupl) {
             return CharterItem::where('key', '=', $icsupl->vpartno)->first();
         }
+
         return null;
     }
 
@@ -93,6 +93,7 @@ class ListItems extends ListRecords
             ->table('icitem80')
             ->where('item', '=', $sbtItem)
             ->first();
+
         return $icitem?->itmdesc ?? '---';
     }
 
@@ -106,10 +107,6 @@ class ListItems extends ListRecords
 
         return mb_ereg_replace(';[A-Z]+', '', $icmanu?->name ?? '---');
     }
-
-
-
-
 
     private function importBom(): void
     {
@@ -139,13 +136,13 @@ class ListItems extends ListRecords
     private function firstOrCreateDetail(mixed $ttsPart, Item $master_item): BillOfMaterials
     {
         $item = $this->firstOrCreateItem($ttsPart);
-        if ($item->id >= 389) dd($item);
         $attributes = [
             'master_item_id' => $master_item->id,
             'item_id' => $item->id,
         ];
         $values = [
         ];
+
         return BillOfMaterials::firstOrCreate($attributes, $values);
     }
 
@@ -162,12 +159,13 @@ class ListItems extends ListRecords
             'manufacturer' => '----',
             'supplier_key' => '----',
         ];
+
         return Item::firstOrCreate($attributes, $values);
     }
 
     private function importImages(): void
     {
-        $imgPath = storage_path() . '/app/import/image';
+        $imgPath = storage_path().'/app/import/image';
         $i = new \FilesystemIterator($imgPath, \FilesystemIterator::SKIP_DOTS);
         foreach ($i as $fileInfo) {
             $this->importFile($fileInfo);
@@ -176,29 +174,39 @@ class ListItems extends ListRecords
 
     public function importFile(\SplFileInfo $fileInfo): void
     {
-        if (!$fileInfo->isFile()) return;
+        if (! $fileInfo->isFile()) {
+            return;
+        }
         $mimeType = mime_content_type($fileInfo->getPathname());
-        if ('image/' !== mb_substr($mimeType, 0, 6)) return;
+        if ('image/' !== mb_substr($mimeType, 0, 6)) {
+            return;
+        }
         $this->importImage($fileInfo);
     }
 
     private function importImage(\SplFileInfo $fileInfo): void
     {
         $sourcePath = $fileInfo->getPathname();
-        $destinationPath = storage_path() . '/app/public/images/' . $fileInfo->getFilename();
+        $destinationPath = storage_path().'/app/public/images/'.$fileInfo->getFilename();
         $sbt_item = mb_ereg_replace('\.[a-z]+$', '', $fileInfo->getFilename());
         $item = Item::whereSbtItem($sbt_item)->first();
-        if (!$item) return;
-        if ($item->image_path) return;
-        if (!copy($sourcePath, $destinationPath)) return;
-        $item->image_path = 'images/' . $fileInfo->getFilename();
+        if (! $item) {
+            return;
+        }
+        if ($item->image_path) {
+            return;
+        }
+        if (! copy($sourcePath, $destinationPath)) {
+            return;
+        }
+        $item->image_path = 'images/'.$fileInfo->getFilename();
         $item->image_name = $fileInfo->getFilename();
         $item->save();
     }
 
     private function importDocuments(): void
     {
-        $docPath = storage_path() . '/app/import/doc';
+        $docPath = storage_path().'/app/import/doc';
         $i = new \FilesystemIterator($docPath, \FilesystemIterator::SKIP_DOTS);
         foreach ($i as $fileInfo) {
             $this->importDir($fileInfo);
@@ -207,10 +215,14 @@ class ListItems extends ListRecords
 
     private function importDir(\SplFileInfo $fileInfo): void
     {
-        if (!$fileInfo->isDir()) return;
+        if (! $fileInfo->isDir()) {
+            return;
+        }
         $sbt_item = $fileInfo->getFilename();
         $item = Item::whereSbtItem($sbt_item)->first();
-        if (!$item) return;
+        if (! $item) {
+            return;
+        }
         $i = new \FilesystemIterator($fileInfo->getPathname(), \FilesystemIterator::SKIP_DOTS);
         foreach ($i as $fileInfo) {
             $this->importDocFile($fileInfo, $item);
@@ -219,19 +231,25 @@ class ListItems extends ListRecords
 
     private function importDocFile(\SplFileInfo $fileInfo, Item $item)
     {
-        if (!$fileInfo->isFile()) return;
+        if (! $fileInfo->isFile()) {
+            return;
+        }
         $sourcePath = $fileInfo->getPathname();
-        $destinationDir = storage_path() . '/app/public/documents/' . $item->sbt_item;
-        $destinationPath = storage_path() . '/app/public/documents/' . $item->sbt_item . '/' . $fileInfo->getFilename();
-        if (!file_exists($destinationDir)) mkdir($destinationDir);
-        if (!copy($sourcePath, $destinationPath)) return;
+        $destinationDir = storage_path().'/app/public/documents/'.$item->sbt_item;
+        $destinationPath = storage_path().'/app/public/documents/'.$item->sbt_item.'/'.$fileInfo->getFilename();
+        if (! file_exists($destinationDir)) {
+            mkdir($destinationDir);
+        }
+        if (! copy($sourcePath, $destinationPath)) {
+            return;
+        }
         $hash = hash_file('sha256', $destinationPath);
         Document::firstOrCreate([
             'item_id' => $item->id,
             'hash' => $hash,
         ], [
             'title' => $fileInfo->getFilename(),
-            'path' => 'documents/' . $item->sbt_item . '/' . $fileInfo->getFilename(),
+            'path' => 'documents/'.$item->sbt_item.'/'.$fileInfo->getFilename(),
         ]);
     }
 }

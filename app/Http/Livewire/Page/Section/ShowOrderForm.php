@@ -13,7 +13,9 @@ class ShowOrderForm extends Component
     public ItemLocation $itemLocation;
 
     public $input = [];
+
     public $backUrl;
+
     public $action;
 
     public function mount(): void
@@ -81,6 +83,7 @@ class ShowOrderForm extends Component
         if ($cartedItem) {
             $cartedItem->quantity++;
             $cartedItem->save();
+
             return;
         }
         CartedItem::create([
