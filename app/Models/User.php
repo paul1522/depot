@@ -65,7 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail, FilamentUser
 
     public function canAccessFilament(): bool
     {
-        return str_ends_with($this->email, '@mpinstrument.com') && $this->hasVerifiedEmail();
+        return (str_ends_with($this->email, '@mpinstrument.com') || str_ends_with($this->email, '@completecatv.com')) && $this->hasVerifiedEmail();
     }
 
     public function locations(): BelongsToMany
