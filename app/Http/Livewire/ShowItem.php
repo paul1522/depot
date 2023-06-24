@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Item;
 use App\Models\ItemLocation;
+use App\Models\Location;
 use Filament\Forms;
 use Livewire\Component;
 
@@ -10,17 +12,21 @@ class ShowItem extends Component implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-    private ItemLocation $itemLocation;
 
-    public function mount($id): void
+    private Item $item;
+    private Location $location;
+
+    public function mount($item, $location): void
     {
-        $this->itemLocation = ItemLocation::find($id);
+        $this->item = Item::find($item);
+        $this->location = Location::find($location);
     }
 
     public function render(): \Illuminate\Contracts\View\View
     {
         return view('livewire.item', [
-            'itemLocation' => $this->itemLocation,
+            'item' => $this->item,
+            'location' => $this->location,
         ]);
     }
 }

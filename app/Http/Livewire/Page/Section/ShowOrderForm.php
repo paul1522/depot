@@ -4,13 +4,16 @@ namespace App\Http\Livewire\Page\Section;
 
 use App\Models\BillOfMaterials;
 use App\Models\CartedItem;
+use App\Models\Item;
 use App\Models\ItemLocation;
+use App\Models\Location;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 class ShowOrderForm extends Component
 {
-    public ItemLocation $itemLocation;
+    public Item $item;
+    public Location $location;
 
     public $input = [];
 
@@ -28,15 +31,15 @@ class ShowOrderForm extends Component
         $this->input['bom_groups'] = [];
         $this->input['bom_groups_values'] = [];
 
-        if ($this->itemLocation->item->bill_of_materials->count() > 0) {
-            foreach ($this->itemLocation->item->bill_of_materials->toQuery()->selectRaw('distinct option_group')->get() as $group_index => $optionGroup) {
+        if ($this->item->bill_of_materials->count() > 0) {
+            foreach ($this->item->bill_of_materials->toQuery()->selectRaw('distinct option_group')->get() as $group_index => $optionGroup) {
                 if ($optionGroup->option_group == null) {
-                    foreach ($this->itemLocation->item->bill_of_materials->whereNull('option_group') as $bom) {
+                    foreach ($this->item->bill_of_materials->whereNull('option_group') as $bom) {
                         $this->input['bom_items'][$bom->id]['checked'] = false;
                     }
                 } else {
                     $group = $optionGroup->option_group;
-                    foreach ($this->itemLocation->item->bill_of_materials->where('option_group', '=', $group) as $bom) {
+                    foreach ($this->item->bill_of_materials->where('option_group', '=', $group) as $bom) {
                         $this->input['bom_group_prompts'][$group_index] = $group;
                         $this->input['bom_groups'][$group_index][$bom->id]['checked'] = false;
                     }
@@ -58,7 +61,7 @@ class ShowOrderForm extends Component
     public function submit(): void
     {
         if ($this->input['master']['checked']) {
-            $this->addItemToCart($this->itemLocation->item->id);
+            $this->addItemToCart($this->item->id);
         }
 
         foreach ($this->input['bom_items'] as $key => $value) {

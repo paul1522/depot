@@ -22,13 +22,21 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
 
     protected function getTableQuery(): Builder
     {
+        /*
+select item_locations.id, item_locations.location_id, item_locations.item_id, item_locations.quantity,
+       items.`group` as `group`, items.manufacturer as manufacturer from `item_locations`
+inner join `items` on `items`.`id` = `item_locations`.`item_id`
+left join `conditions` on `conditions`.`id` = `item_locations`.`condition_id`
+where conditions.show_in_catalog is null or conditions.show_in_catalog <> 0
+and `location_id` in (?)
+         */
         return ItemLocation::query()
             ->selectRaw('item_locations.id, item_locations.location_id, item_locations.item_id, '.
                 'item_locations.quantity, items.`group` as `group`, items.manufacturer as manufacturer')
             ->join('items', 'items.id', '=', 'item_locations.item_id')
-            ->join('conditions', 'conditions.id', '=', 'item_locations.condition_id')
-            ->where('conditions.show_in_catalog', '<>', 0)
-            ->whereIn('location_id', $this->locationIds());
+            ->leftJoin('conditions', 'conditions.id', '=', 'item_locations.condition_id')
+            ->whereRaw('(conditions.show_in_catalog is null or conditions.show_in_catalog <> 0)')
+            ->whereIn('item_locations.location_id', $this->locationIds());
     }
 
     protected function locationIds(): array
@@ -70,7 +78,10 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
 
     protected function getTableRecordUrlUsing(): ?Closure
     {
-        return fn (ItemLocation $itemLocation): string => route('item.show', ['id' => $itemLocation->id]);
+        return fn (ItemLocation $itemLocation): string => route('item.show', [
+            'item' => $itemLocation->item_id,
+            'location' => $itemLocation->location_id
+        ]);
     }
 
     private function locationOptions(): array

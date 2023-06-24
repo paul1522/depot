@@ -5,7 +5,7 @@
         <div>
             <div class="inline-block w-8"></div>
             <div class="inline-block w-8"><input type="checkbox" wire:model="input.master.checked" class="dui-checkbox" /></div>
-            <div class="inline-block">{{ $itemLocation->item->description }}</div>
+            <div class="inline-block">{{ $item->description }}</div>
         </div>
 
         @foreach($input['bom_items'] as $key => $bom)

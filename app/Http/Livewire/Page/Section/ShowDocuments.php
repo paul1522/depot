@@ -4,7 +4,9 @@ namespace App\Http\Livewire\Page\Section;
 
 use App\Models\BillOfMaterials;
 use App\Models\Document;
+use App\Models\Item;
 use App\Models\ItemLocation;
+use App\Models\Location;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +16,7 @@ class ShowDocuments extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
 
-    public ItemLocation $itemLocation;
+    public Item $item;
 
     public function render()
     {
@@ -25,9 +27,9 @@ class ShowDocuments extends Component implements Tables\Contracts\HasTable
     {
         return Document::query()
             ->selectRaw('hash, min(id) as id, min(title) as title, min(path) as path')
-            ->whereItemId($this->itemLocation->item_id)
+            ->whereItemId($this->item->id)
             ->orWhereIn('item_id',
-                BillOfMaterials::whereMasterItemId($this->itemLocation->item_id)->pluck('item_id'))
+                BillOfMaterials::whereMasterItemId($this->item->id)->pluck('item_id'))
             ->groupBy('hash');
     }
 

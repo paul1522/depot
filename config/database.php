@@ -85,7 +85,7 @@ return [
             'driver' => 'mysql',
             'host' => env('DB_GLUTTONY_HOST', '127.0.0.1'),
             'port' => env('DB_GLUTTONY_PORT', '13306'),
-            'database' => env('DB_GLUTTONY_DATABASE', 'gluttony'),
+            'database' => env('DB_GLUTTONY_DATABASE', 'gluttony_2'),
             'username' => env('DB_GLUTTONY_USERNAME', ''),
             'password' => env('DB_GLUTTONY_PASSWORD', ''),
             'charset' => 'utf8mb4',

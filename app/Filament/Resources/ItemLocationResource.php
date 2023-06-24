@@ -41,11 +41,11 @@ class ItemLocationResource extends Resource
         return $table
             ->columns([
                 // Tables\Columns\TextColumn::make('item.id'),
-                Tables\Columns\TextColumn::make('item.description'),
-                Tables\Columns\TextColumn::make('item.sbt_item'),
-                Tables\Columns\TextColumn::make('location.name'),
-                Tables\Columns\TextColumn::make('condition.name'),
-                Tables\Columns\TextColumn::make('quantity'),
+                Tables\Columns\TextColumn::make('item.description')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('item.sbt_item')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('location.name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('condition.name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('quantity')->sortable(),
                 // Tables\Columns\TextColumn::make('created_at')->dateTime(),
                 // Tables\Columns\TextColumn::make('updated_at')->dateTime(),
             ])

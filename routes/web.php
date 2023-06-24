@@ -28,7 +28,7 @@ Route::middleware([
     Route::get('/cart', ShowCart::class)->name('cart.show');
     Route::get('/catalog', ShowCatalog::class)->name('catalog.show');
     Route::view('/image/{item}', 'image')->name('image');
-    Route::get('/item/{id}', ShowItem::class)->name('item.show');
+    Route::get('/item/{item}/{location}', ShowItem::class)->name('item.show');
     Route::get('/orders', ShowOrders::class)->name('orders.show');
     Route::get('/order/{id}', ShowOrder::class)->name('order.show');
     Route::view('/reports', 'reports')->name('reports');
