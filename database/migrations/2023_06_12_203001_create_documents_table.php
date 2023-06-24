@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('path')->index();
             $table->string('hash')->index();
 
-            $table->foreignId('item_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('item_id')->constrained();
 
             $table->timestamps();
         });

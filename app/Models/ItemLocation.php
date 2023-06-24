@@ -18,4 +18,9 @@ class ItemLocation extends Model
     {
         return $this->belongsTo(Location::class);
     }
+
+    public function condition(): BelongsTo
+    {
+        return $this->belongsTo(Condition::class);
+    }
 }

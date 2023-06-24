@@ -17,8 +17,8 @@ return new class extends Migration
             $table->integer('quantity_ordered');
             $table->integer('quantity_shipped')->default(0);
 
-            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('item_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('order_id')->constrained();
+            $table->foreignId('item_id')->constrained();
 
             $table->timestamps();
         });

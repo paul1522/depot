@@ -3,12 +3,15 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ItemLocationResource\Pages;
+use App\Filament\Resources\ItemLocationResource\RelationManagers;
 use App\Models\ItemLocation;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ItemLocationResource extends Resource
 {
@@ -20,11 +23,16 @@ class ItemLocationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('location_id')
-                    ->relationship('location', 'sbt_loctid')->required(),
                 Forms\Components\Select::make('item_id')
-                    ->relationship('item', 'sbt_item')->required(),
-                Forms\Components\TextInput::make('quantity')->required(),
+                    ->relationship('item', 'id')
+                    ->required(),
+                Forms\Components\Select::make('location_id')
+                    ->relationship('location', 'name')
+                    ->required(),
+                Forms\Components\Select::make('condition_id')
+                    ->relationship('condition', 'name'),
+                Forms\Components\TextInput::make('quantity')
+                    ->required(),
             ]);
     }
 
@@ -32,9 +40,12 @@ class ItemLocationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('location.sbt_loctid')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('item.sbt_item')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('quantity')->sortable(),
+                // Tables\Columns\TextColumn::make('item.id'),
+                Tables\Columns\TextColumn::make('item.description'),
+                Tables\Columns\TextColumn::make('item.sbt_item'),
+                Tables\Columns\TextColumn::make('location.name'),
+                Tables\Columns\TextColumn::make('condition.name'),
+                Tables\Columns\TextColumn::make('quantity'),
                 // Tables\Columns\TextColumn::make('created_at')->dateTime(),
                 // Tables\Columns\TextColumn::make('updated_at')->dateTime(),
             ])
@@ -42,10 +53,11 @@ class ItemLocationResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\ViewAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -61,7 +73,8 @@ class ItemLocationResource extends Resource
         return [
             'index' => Pages\ListItemLocations::route('/'),
             'create' => Pages\CreateItemLocation::route('/create'),
-            'edit' => Pages\EditItemLocation::route('/{record}/edit'),
+            // 'view' => Pages\ViewItemLocation::route('/{record}'),
+            // 'edit' => Pages\EditItemLocation::route('/{record}/edit'),
         ];
     }
 }

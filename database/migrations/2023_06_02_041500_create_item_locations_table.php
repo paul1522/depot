@@ -16,12 +16,13 @@ return new class extends Migration
 
             $table->integer('quantity')->index();
 
-            $table->foreignId('location_id')->constrained();
             $table->foreignId('item_id')->constrained();
+            $table->foreignId('location_id')->constrained();
+            $table->foreignId('condition_id')->nullable()->constrained();
 
             $table->timestamps();
 
-            $table->unique(['location_id', 'item_id']);
+            $table->unique(['location_id', 'item_id', 'condition_id']);
         });
     }
 

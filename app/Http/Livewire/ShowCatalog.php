@@ -23,8 +23,11 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
     protected function getTableQuery(): Builder
     {
         return ItemLocation::query()
-            ->selectRaw('item_locations.id, item_locations.location_id, item_locations.item_id, item_locations.quantity, items.`group` as `group`, items.manufacturer as manufacturer')
+            ->selectRaw('item_locations.id, item_locations.location_id, item_locations.item_id, '.
+                'item_locations.quantity, items.`group` as `group`, items.manufacturer as manufacturer')
             ->join('items', 'items.id', '=', 'item_locations.item_id')
+            ->join('conditions', 'conditions.id', '=', 'item_locations.condition_id')
+            ->where('conditions.show_in_catalog', '<>', 0)
             ->whereIn('location_id', $this->locationIds());
     }
 

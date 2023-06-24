@@ -16,15 +16,14 @@ return new class extends Migration
 
             $table->string('status')->nullable()->index();
 
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained();
             $table->foreignId('ship_location_id');
 
             $table->timestamps();
 
             $table->foreign('ship_location_id')
                 ->references('id')
-                ->on('locations')
-                ->cascadeOnDelete();
+                ->on('locations');
         });
     }
 

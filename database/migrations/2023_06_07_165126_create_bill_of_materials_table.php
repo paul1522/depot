@@ -16,13 +16,12 @@ return new class extends Migration
 
             $table->string('option_group')->index()->nullable();
 
-            $table->foreignId('item_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('item_id')->constrained();
             $table->foreignId('master_item_id');
 
             $table->foreign('master_item_id')
                 ->references('id')
-                ->on('items')
-                ->cascadeOnDelete();
+                ->on('items');
 
             $table->timestamps();
         });

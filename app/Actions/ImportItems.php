@@ -19,7 +19,7 @@ class ImportItems
             ->get();
 
         foreach ($iciloc as $iloc) {
-            $sbtItem = mb_ereg_replace('-.$', '', trim($iloc->item));
+            $sbtItem = mb_ereg_replace('-[A-Z]$', '', trim($iloc->item));
             $charterItem = $this->findCharterItem($sbtItem);
 
             $itemKey = [

@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ItemLocationResource\Pages;
 
 use App\Actions\ImportItemLocations;
 use App\Filament\Resources\ItemLocationResource;
-use Exception;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -12,9 +11,6 @@ class ListItemLocations extends ListRecords
 {
     protected static string $resource = ItemLocationResource::class;
 
-    /**
-     * @throws Exception
-     */
     protected function getActions(): array
     {
         return [
@@ -23,7 +19,8 @@ class ListItemLocations extends ListRecords
                     ImportItemLocations::run();
                 })
                 ->requiresConfirmation(),
-            Actions\CreateAction::make(),
+
+            // Actions\CreateAction::make(),
         ];
     }
 }
