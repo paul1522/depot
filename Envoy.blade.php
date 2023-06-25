@@ -15,16 +15,19 @@
         echo $e->getMessage();
     }
 
-    $php_ver           = $_ENV['DEPLOY_PHP_VERSION'];
-    $tmp               = $_ENV['DEPLOY_TMP'];
-    $user              = $_ENV['DEPLOY_USER'] ?? 'envoy';
-    $server            = $_ENV['DEPLOY_SERVER'];
-    $repo              = $_ENV['DEPLOY_REPOSITORY'];
-    $branch            = $_ENV['DEPLOY_BRANCH'] ?? 'main';
-    $path              = $_ENV['DEPLOY_PATH'];
-    $db_database       = $_ENV['DEPLOY_DATABASE'];
-    $env               = $_ENV['DEPLOY_ENV'] ?? 'production';
-    $health_url        = $_ENV['DEPLOY_HEALTH_URL'] ?? '';
+    $php_ver              = $_ENV['DEPLOY_PHP_VERSION'];
+    $tmp                  = $_ENV['DEPLOY_TMP'];
+    $user                 = $_ENV['DEPLOY_USER'] ?? 'envoy';
+    $server               = $_ENV['DEPLOY_SERVER'];
+    $repo                 = $_ENV['DEPLOY_REPOSITORY'];
+    $branch               = $_ENV['DEPLOY_BRANCH'] ?? 'main';
+    $path                 = $_ENV['DEPLOY_PATH'];
+    $db_database          = $_ENV['DEPLOY_DATABASE'];
+    $db_basilisk_database = $_ENV['DEPLOY_BASILISK_DATABASE'];
+    $db_gluttony_database = $_ENV['DEPLOY_GLUTTONY_DATABASE'];
+    $mail_password        = $_ENV['DEPLOY_MAIL_PASSWORD'];
+    $env                  = $_ENV['DEPLOY_ENV'];
+    $health_url           = $_ENV['DEPLOY_HEALTH_URL'] ?? '';
 
     if ( substr($path, 0, 1) !== '/' ) {
         throw new Exception('Careful - your deployment path does not begin with /');
@@ -37,7 +40,6 @@
     $db_password = bin2hex(random_bytes(16));
     $php         = "php{$php_ver}";
     $user_server = "{$user}@{$server}";
-    $db_database = $env == "production" ? $db_database : "{$db_database}_{$env}"
 @endsetup
 
 
@@ -100,7 +102,7 @@
     cd {{ $tmp }} || exit 1
     git clone {{ $repo }} --branch={{ $branch }} --depth=1 -q {{ $tmp_release }} || exit 1
     rm -rf {{ $tmp_release }}/.git || exit 1
-    cp {{ $tmp_release }}/.env.{{ $env }} {{ $tmp_release }}/.env
+    cp {{ $tmp_release }}/{{ $env }} {{ $tmp_release }}/.env
     sudo chmod -R a+rwx {{ $tmp_release }}
     echo "Repository cloned"
 @endtask
@@ -159,11 +161,18 @@
 @task ('initialize', ['on' => 'web'])
     if [ ! -d {{ $path }}/storage ]; then
         cd {{ $release }}
-        mv {{ $release }}/.env.{{ $env }} {{ $release }}/.env
+        mv {{ $release }}/{{ $env }} {{ $release }}/.env
         echo "" >> {{ $release }}/.env
         echo "DB_DATABASE=\"{{ $db_database }}\"" >> {{ $release }}/.env
         echo "DB_USERNAME=\"{{ $db_database }}\"" >> {{ $release }}/.env
         echo "DB_PASSWORD=\"{{ $db_password }}\"" >> {{ $release }}/.env
+        echo "DB_BASILISK_DATABASE=\"{{ $db_basilisk_database }}\"" >> {{ $release }}/.env
+        echo "DB_BASILISK_USERNAME=\"{{ $db_database }}\"" >> {{ $release }}/.env
+        echo "DB_BASILISK_PASSWORD=\"{{ $db_password }}\"" >> {{ $release }}/.env
+        echo "DB_GLUTTONY_DATABASE=\"{{ $db_gluttony_database }}\"" >> {{ $release }}/.env
+        echo "DB_GLUTTONY_USERNAME=\"{{ $db_database }}\"" >> {{ $release }}/.env
+        echo "DB_GLUTTONY_PASSWORD=\"{{ $db_password }}\"" >> {{ $release }}/.env
+        echo "MAIL_PASSWORD=\"{{ $mail_password }}\"" >> {{ $release }}/.env
         echo "" >> {{ $release }}/.env
 
         {{ $php }} artisan key:generate
@@ -171,8 +180,12 @@
         echo "Environment file set up"
 
         mysql -e "create database \`{{ $db_database }}\`"
+        mysql -e "create database \`{{ $db_basilisk_database }}\`"
+        mysql -e "create database \`{{ $db_gluttony_database }}\`"
         mysql -e "create user '{{ $db_database }}'@'localhost' identified by '{{ $db_password }}'"
         mysql -e "grant all privileges on \`{{$db_database}}\`.* to '{{ $db_database }}'@'localhost'"
+        mysql -e "grant all privileges on \`{{$db_basilisk_database}}\`.* to '{{ $db_database }}'@'localhost'"
+        mysql -e "grant all privileges on \`{{$db_gluttony_database}}\`.* to '{{ $db_database }}'@'localhost'"
         echo "Database initialized"
 
         cd {{ $path }}
@@ -257,6 +270,10 @@
     echo "Removed {{ $path }}"
     mysql -e "drop database \`{{ $db_database }}\`"
     echo "Dropped database {{ $db_database }}"
+    mysql -e "drop database \`{{ $db_basilisk_database }}\`"
+    echo "Dropped database {{ $db_basilisk_database }}"
+    mysql -e "drop database \`{{ $db_gluttony_database }}\`"
+    echo "Dropped database {{ $db_gluttony_database }}"
     mysql -e "drop user '{{ $db_database }}'@'localhost'"
     echo "Dropped user {{ $db_database }}@localhost"
     echo "Zap successful"
@@ -270,9 +287,9 @@ TODO: Check that response matches this string.
     @if ( ! empty($health_url) )
         HEALTH="$(curl --write-out "%{http_code}" --silent --output /dev/null {{ $health_url }})"
         if [ "$HEALTH" = "200" ]; then
-        printf "\033[0;32mHealth check to {{ $health_url }} OK\033[0m\n"
+            printf "\033[0;32mHealth check to {{ $health_url }} OK\033[0m\n"
         else
-        printf "\033[1;31mHealth check to {{ $health_url }} FAILED\033[0m\n"
+            printf "\033[1;31mHealth check to {{ $health_url }} FAILED\033[0m\n"
         fi
     @else
         echo "No health check set"
