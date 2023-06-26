@@ -58,11 +58,11 @@ class ImportItemLocations
 
     private function getConditionId(?string $conditionCode): ?int
     {
-        if (!$conditionCode) return null;
-        $condition = Condition::where('sbt_suffix', '=', $conditionCode)->first();
+        if (!$conditionCode) $condition = Condition::whereNull('sbt_suffix')->first();
+        else $condition = Condition::where('sbt_suffix', '=', $conditionCode)->first();
         if ($condition) return $condition->id;
         $condition = Condition::create([
-            'sbt_suffix' => $conditionCode,
+            'sbt_suffix' => !$conditionCode ? null : $conditionCode,
             'name' => "-{$conditionCode}-",
         ]);
         return $condition->id;

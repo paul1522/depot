@@ -30,8 +30,8 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
             ->join('items', 'item_locations.item_id', '=', 'items.id')
             ->join('locations', 'locations.id', '=', 'item_locations.location_id')
             ->join('location_user', 'location_user.location_id', '=', 'locations.id')
-            ->leftJoin('conditions', 'conditions.id', '=', 'item_locations.condition_id')
-            ->whereRaw('(item_locations.condition_id is null or conditions.show_in_catalog = 1)')
+            ->join('conditions', 'conditions.id', '=', 'item_locations.condition_id')
+            ->where('conditions.show_in_catalog', '=', 1)
             ->where('location_user.user_id', '=', request()->user()->id)
             ->groupByRaw('item_locations.item_id, item_locations.location_id');
     }

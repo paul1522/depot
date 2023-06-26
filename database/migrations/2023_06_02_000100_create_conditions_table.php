@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name')->unique();
             $table->boolean('show_in_catalog')->default(true);
-            $table->char('sbt_suffix')->unique();
+            $table->char('sbt_suffix', 1)->nullable()->unique();
             $table->timestamps();
         });
     }

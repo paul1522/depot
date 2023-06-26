@@ -26,7 +26,7 @@ class ConditionResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('sbt_suffix')->required()->maxLength(1),
+                TextInput::make('sbt_suffix')->maxLength(1),
                 TextInput::make('name')->required(),
                 Checkbox::make('show_in_catalog'),
             ]);

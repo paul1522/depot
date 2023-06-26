@@ -7,10 +7,11 @@
         <x-form.string label="Group">{{ $item->group }}</x-form.string>
         <x-form.string label="Manufacturer">{{ $item->manufacturer }}</x-form.string>
         <x-form.string label="Quantity Available for {{ $location->name }}">{{
-        \App\Models\ItemLocation::where('item_id', '=', $item->id)
-        ->where('location_id', '=', $location->id)
-        ->whereRaw('(condition_id is null or condition_id in (select id from conditions where show_in_catalog))')
-        ->sum('quantity') }}</x-form.string>
+            \App\Models\ItemLocation::where('item_id', '=', $item->id)
+            ->where('location_id', '=', $location->id)
+            ->whereRaw('(condition_id in (select id from conditions where show_in_catalog))')
+            ->sum('quantity')
+        }}</x-form.string>
 
     </x-grid>
     </div>

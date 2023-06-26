@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->foreignId('item_id')->constrained();
             $table->foreignId('location_id')->constrained();
-            $table->foreignId('condition_id')->nullable()->constrained();
+            $table->foreignId('condition_id')->constrained();
 
             $table->timestamps();
 
