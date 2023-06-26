@@ -14,9 +14,6 @@
                     <x-nav-link href="{{ route('orders.show') }}" :active="request()->routeIs('orders.show')">
                         {{ __('Orders') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('reports') }}" :active="request()->routeIs('reports')">
-                        {{ __('Reports') }}
-                    </x-nav-link>
                     @if (request()->user()->canAccessFilament())
                         <x-nav-link href="{{ route('filament.pages.dashboard') }}" :active="request()->routeIs('filament.pages.dashboard')">
                             {{ __('Admin') }}
@@ -154,9 +151,6 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('orders.show') }}" :active="request()->routeIs('orders.show')">
                 {{ __('Orders') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('reports') }}" :active="request()->routeIs('reports')">
-                {{ __('Reports') }}
             </x-responsive-nav-link>
             @if (request()->user()->canAccessFilament())
                 <x-responsive-nav-link href="{{ route('filament.pages.dashboard') }}" :active="request()->routeIs('filament.pages.dashboard')">
