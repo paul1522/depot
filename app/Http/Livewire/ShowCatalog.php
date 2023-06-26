@@ -45,7 +45,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('item.description')->label('Description')->sortable()->searchable(),
             Tables\Columns\TextColumn::make('item.key')->label('Key')->sortable()->searchable(),
             Tables\Columns\TextColumn::make('item.supplier_key')->label('Supplier Key')->sortable()->searchable(),
-            Tables\Columns\TextColumn::make('sum_quantity')->sortable(),
+            Tables\Columns\TextColumn::make('sum_quantity')->label('Quantity')->sortable(),
         ];
     }
 

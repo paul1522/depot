@@ -35,7 +35,7 @@ class LocationsRelationManager extends RelationManager
             ])
             ->headerActions([
                 // Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make(),
+                Tables\Actions\AttachAction::make()->preloadRecordSelect(),
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
