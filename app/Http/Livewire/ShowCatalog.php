@@ -63,7 +63,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
                 ->attribute('location.id'),
             Tables\Filters\Filter::make('group')
                 ->form([
-                    Forms\Components\Select::make('group')->options($this->groupOptions()),
+                    Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
                     if (!$data['group']) return $query;
@@ -71,7 +71,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
                 }),
             Tables\Filters\Filter::make('manufacturer')
                 ->form([
-                    Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions()),
+                    Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
                     if (!$data['manufacturer']) return $query;
