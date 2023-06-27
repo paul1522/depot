@@ -5,7 +5,7 @@
         </x-page.header>
     </x-slot>
 
-    <x-page.content>
+    <x-page.wide-content>
         {{ $this->table }}
-    </x-page.content>
+    </x-page.wide-content>
 </div>
