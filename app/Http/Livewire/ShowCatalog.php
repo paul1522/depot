@@ -68,6 +68,9 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
                 ->query(function (Builder $query, array $data): Builder {
                     if (!$data['group']) return $query;
                     return $query->whereRaw('`item_id` in (select id from items where `group` = \''. $data['group'] .'\')');
+                })
+                ->indicateUsing(function (array $data): ?string {
+                    return $data['group'] ? 'Group: ' . $data['group'] : null;
                 }),
             Tables\Filters\Filter::make('manufacturer')
                 ->form([
@@ -76,6 +79,9 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
                 ->query(function (Builder $query, array $data): Builder {
                     if (!$data['manufacturer']) return $query;
                     return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''. $data['manufacturer'] .'\')');
+                })
+                ->indicateUsing(function (array $data): ?string {
+                    return $data['manufacturer'] ? 'Manufacturer: ' . $data['manufacturer'] : null;
                 }),
         ];
     }
