@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\Condition;
 use App\Models\Item;
 use App\Models\ItemLocation;
@@ -41,7 +42,8 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
         ];
     }
 
-    protected function getTableQuery(): Builder|Relation
+    public function getTableQuery(): Builder|Relation
+    // Must be public for FilamentExportHeaderAction
     {
         return ItemLocation::query()
             ->join('items', 'items.id', '=', 'item_locations.item_id')
@@ -73,12 +75,16 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
 //        ];
     }
 
-//    protected function getTableBulkActions(): array
-//    {
-//        return [
-//            ExportBulkAction::make(),
-//        ];
-//    }
+
+    protected function getTableHeaderActions(): array
+    {
+        return [
+            FilamentExportHeaderAction::make('Export')
+                ->disableAdditionalColumns()
+                ->disableFilterColumns()
+                ->fileNamePrefix('Depot Inventory Status Report'),
+        ];
+    }
 
     protected function getTableFilters(): array
     {

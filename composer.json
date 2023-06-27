@@ -8,6 +8,7 @@
         "php": "^8.1",
         "ext-fileinfo": "*",
         "ext-mbstring": "*",
+        "alperenersoy/filament-export": "^0.3.6",
         "ans-group/laravel-health-check": "^1.14",
         "filament/filament": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
