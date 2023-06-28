@@ -17,7 +17,9 @@ class ImportItemLocations
     {
         $iciloc = DB::connection('basilisk')
             ->table('iciloc80')
+            ->join('icitem80', 'icitem80.item', '=', 'iciloc80.item')
             ->where('loctid', 'like', 'CH/%')
+            ->where('icitem80.type', '=', 'I')
             ->get();
 
         ItemLocation::query()->update(['quantity' => 0]);

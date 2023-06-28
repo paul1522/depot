@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use App\Actions\ImportItemLocations;
+use App\Actions\ImportItems;
+use App\Actions\ImportLocations;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -12,7 +15,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            ImportLocations::run();
+            ImportItems::run();
+            ImportItemLocations::run();
+        })->everyTwoHours();
     }
 
     /**

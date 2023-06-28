@@ -15,7 +15,9 @@ class ImportItems
     {
         $iciloc = DB::connection('basilisk')
             ->table('iciloc80')
-            ->where('loctid', 'like', 'CH/%')
+            ->join('icitem80', 'icitem80.item', '=', 'iciloc80.item')
+            ->where('iciloc80.loctid', 'like', 'CH/%')
+            ->where('icitem80.type', '=', 'I')
             ->get();
 
         foreach ($iciloc as $iloc) {
@@ -33,7 +35,16 @@ class ImportItems
                 'manufacturer' => $this->getManufacturer($sbtItem),
             ];
 
-            Item::firstOrCreate($itemKey, $itemData);
+            $item = Item::firstOrCreate($itemKey, $itemData);
+
+            if ($item->wasRecentlyCreated) return;
+
+            if ($item->key == '---') $item->key = $charterItem?->key ?? '---';
+            if ($item->supplier_key == '---') $item->supplier_key = $charterItem->supplier_key ?? '---';
+            if ($item->description == '---') $item->description = $charterItem->description ?? $this->getItmdesc($sbtItem);
+            if ($item->group == '---') $item->group = $charterItem->group ?? '---';
+            if ($item->manufacturer == '---') $item->manufacturer = $this->getManufacturer($sbtItem);
+            $item->save();
         }
     }
 
@@ -59,7 +70,7 @@ class ImportItems
     {
         $icitem = DB::connection('basilisk')
             ->table('icitem80')
-            ->where('item', '=', $sbtItem)
+            ->where('item', 'like', $sbtItem.'%')
             ->first();
 
         return $icitem?->itmdesc ?? '---';
