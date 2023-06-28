@@ -27,7 +27,7 @@ class LocationResource extends Resource
                 Forms\Components\TextInput::make('city')->required()->maxLength(255),
                 Forms\Components\TextInput::make('state')->required()->maxLength(255),
                 Forms\Components\TextInput::make('zip')->required()->maxLength(255),
-                Forms\Components\TextInput::make('sbt_loctid')->required()->maxLength(255),
+                Forms\Components\TextInput::make('sbt_loctid')->label('SBT location')->required()->maxLength(255),
             ]);
     }
 
@@ -41,7 +41,7 @@ class LocationResource extends Resource
                 Tables\Columns\TextColumn::make('city')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('state')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('zip')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('sbt_loctid')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('sbt_loctid')->label('SBT location')->sortable()->searchable(),
                 // Tables\Columns\TextColumn::make('created_at')->dateTime(),
                 // Tables\Columns\TextColumn::make('updated_at')->dateTime(),
             ])
@@ -52,7 +52,7 @@ class LocationResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

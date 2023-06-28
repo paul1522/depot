@@ -47,12 +47,12 @@ class ItemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('key')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('supplier_key')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('description')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('group')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('key')->label('Charter key')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('supplier_key')->label('Charter supplier key')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('description')->label('Charter description')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('group')->label('Charter group')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('manufacturer')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('sbt_item')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('sbt_item')->label('SBT item prefix')->sortable()->searchable(),
                 // Tables\Columns\TextColumn::make('created_at')->dateTime(),
                 // Tables\Columns\TextColumn::make('updated_at')->dateTime(),
             ])
@@ -63,7 +63,7 @@ class ItemResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

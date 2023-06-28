@@ -13,7 +13,7 @@ class EditCondition extends EditRecord
     protected function getActions(): array
     {
         return [
-            DeleteAction::make(),
+            // DeleteAction::make(),
         ];
     }
 }

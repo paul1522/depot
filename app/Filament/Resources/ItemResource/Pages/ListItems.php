@@ -43,7 +43,7 @@ class ListItems extends ListRecords
                     })
                     ->requiresConfirmation(),
             ])->label('Import'),
-            Actions\CreateAction::make(),
+            // Actions\CreateAction::make(),
         ];
     }
 }

@@ -10,7 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 
@@ -26,7 +26,7 @@ class ConditionResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('sbt_suffix')->maxLength(1),
+                TextInput::make('sbt_suffix')->label('SBT suffix')->maxLength(1),
                 TextInput::make('name')->required(),
                 Checkbox::make('show_in_catalog'),
             ]);
@@ -36,10 +36,17 @@ class ConditionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('sbt_suffix')->sortable(),
+                TextColumn::make('sbt_suffix')->label('SBT suffix')->sortable(),
                 TextColumn::make('name')->searchable()->sortable(),
                 IconColumn::make('show_in_catalog')->boolean()->sortable(),
+            ])
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
+
     }
 
     public static function getPages(): array

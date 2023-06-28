@@ -23,7 +23,7 @@ class ListLocations extends ListRecords
                     $this->importIcloct80();
                 })
                 ->requiresConfirmation(),
-            Actions\CreateAction::make(),
+            // Actions\CreateAction::make(),
         ];
     }
 

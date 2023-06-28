@@ -41,8 +41,8 @@ class ItemLocationResource extends Resource
         return $table
             ->columns([
                 // Tables\Columns\TextColumn::make('item.id'),
-                Tables\Columns\TextColumn::make('item.description')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('item.sbt_item')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('item.description')->label('Charter description')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('item.sbt_item')->label('SBT item prefix')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('location.name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('condition.name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('quantity')->sortable(),

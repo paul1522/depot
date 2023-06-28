@@ -70,7 +70,7 @@ class ImportItems
     {
         $icitem = DB::connection('basilisk')
             ->table('icitem80')
-            ->where('item', 'like', $sbtItem.'%')
+            ->where('item', 'regexp', $sbtItem.'(-[A-Z])?')
             ->first();
 
         return $icitem?->itmdesc ?? '---';
