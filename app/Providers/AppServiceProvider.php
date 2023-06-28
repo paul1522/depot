@@ -23,9 +23,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Filament::serving(function () {
             Filament::registerNavigationItems([
-                NavigationItem::make('Return to catalog')
+                NavigationItem::make('Return to Catalog')
                     ->url(route('catalog.show'))
-                    ->icon('heroicon-o-document')
+                    ->icon('heroicon-o-link')
                     ->sort(999)
             ]);
         });

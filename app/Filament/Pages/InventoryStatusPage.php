@@ -60,19 +60,17 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
     protected function getTableColumns(): array
     {
         $columns = [
-            Tables\Columns\TextColumn::make('item.description')->label('Description')->searchable(),
-            Tables\Columns\TextColumn::make('item.key')->label('Key')->searchable(),
-            Tables\Columns\TextColumn::make('item.supplier_key')->label('Supplier Key')->searchable(),
-            Tables\Columns\TextColumn::make('item.group')->label('Group'),
+            Tables\Columns\TextColumn::make('item.description')->label('Charter description')->searchable(),
+            Tables\Columns\TextColumn::make('item.sbt_item')->label('SBT item prefix')->searchable(),
+            Tables\Columns\TextColumn::make('item.key')->label('Charter key')->searchable(),
+            Tables\Columns\TextColumn::make('item.supplier_key')->label('Charter supplier key')->searchable(),
+            Tables\Columns\TextColumn::make('item.group')->label('Charter group'),
             Tables\Columns\TextColumn::make('item.manufacturer')->label('Manufacturer'),
             Tables\Columns\TextColumn::make('location.name')->label('Location'),
             Tables\Columns\TextColumn::make('condition.name')->label('Condition'),
             Tables\Columns\TextColumn::make('quantity'),
         ];
         return $columns;
-//        return [
-//            Tables\Columns\Layout\Grid::make(12)->schema($columns)
-//        ];
     }
 
 
@@ -82,7 +80,7 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
             FilamentExportHeaderAction::make('Export')
                 ->disableAdditionalColumns()
                 ->disableFilterColumns()
-                ->fileNamePrefix('Depot Inventory Status Report'),
+                ->fileNamePrefix('Depot Inventory Status Admin Report'),
         ];
     }
 
