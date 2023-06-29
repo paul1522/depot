@@ -37,7 +37,7 @@ class ImportItems
 
             $item = Item::firstOrCreate($itemKey, $itemData);
 
-            if ($item->wasRecentlyCreated) return;
+            if ($item->wasRecentlyCreated) continue;
 
             if ($item->key == '---') $item->key = $charterItem?->key ?? '---';
             if ($item->supplier_key == '---') $item->supplier_key = $charterItem->supplier_key ?? '---';
