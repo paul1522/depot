@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 w-full">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -14,7 +14,7 @@
                     <x-nav-link href="{{ route('orders.show') }}" :active="request()->routeIs('orders.show')">
                         {{ __('Orders') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('reports') }}" :active="request()->routeIs('reports')">
+                    <x-nav-link href="{{ route('reports.inventory.status') }}" :active="request()->routeIs('reports.inventory.status')">
                         {{ __('Reports') }}
                     </x-nav-link>
                     @if (request()->user()->canAccessFilament())
@@ -155,7 +155,7 @@
             <x-responsive-nav-link href="{{ route('orders.show') }}" :active="request()->routeIs('orders.show')">
                 {{ __('Orders') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('reports') }}" :active="request()->routeIs('reports')">
+            <x-responsive-nav-link href="{{ route('reports.inventory.status') }}" :active="request()->routeIs('reports.inventory.status')">
                 {{ __('Reports') }}
             </x-responsive-nav-link>
             @if (request()->user()->canAccessFilament())

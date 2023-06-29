@@ -1,4 +1,4 @@
-<div>
+<div class="w-full">
     <x-slot name="header">
         <x-page.header>
             {{ __('Catalog') }}

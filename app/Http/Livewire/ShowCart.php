@@ -29,7 +29,10 @@ class ShowCart extends Component implements HasTable
 
     public function render()
     {
-        return view('livewire.cart');
+        return view('livewire.cart')
+            ->layout('layouts.app', [
+                'drawer_open' => false
+            ]);
     }
 
     protected function getTableQuery(): Builder

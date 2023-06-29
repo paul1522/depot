@@ -20,7 +20,10 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
 
     public function render()
     {
-        return view('livewire.inventory-status-report');
+        return view('livewire.inventory-status-report')
+            ->layout('layouts.app', [
+                'drawer_open' => true
+            ]);
     }
 
     public function getTableQuery(): Builder|Relation
