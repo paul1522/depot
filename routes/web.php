@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Livewire\InventoryStatusReport;
-use App\Http\Livewire\InventoryTransationsReport;
+use App\Http\Livewire\InventoryTransactionsReport;
 use App\Http\Livewire\ShowCart;
 use App\Http\Livewire\ShowCatalog;
 use App\Http\Livewire\ShowItem;
@@ -34,5 +34,5 @@ Route::middleware([
     Route::get('/orders', ShowOrders::class)->name('orders.show');
     Route::get('/order/{id}', ShowOrder::class)->name('order.show');
     Route::get('/reports/inventory/status', InventoryStatusReport::class)->name('reports.inventory.status');
-    Route::get('/reports/inventory/transactions', InventoryTransationsReport::class)->name('reports.inventory.transactions');
+    Route::get('/reports/inventory/transactions', InventoryTransactionsReport::class)->name('reports.inventory.transactions');
 });

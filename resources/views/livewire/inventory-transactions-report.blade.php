@@ -1,0 +1,11 @@
+<div class="w-full">
+    <x-slot name="header">
+        <x-page.header>
+            {{ __('Inventory Transactions Report') }}
+        </x-page.header>
+    </x-slot>
+
+    <x-page.content width="max-w-full">
+        {{ $this->table }}
+    </x-page.content>
+</div>
