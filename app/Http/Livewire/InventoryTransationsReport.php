@@ -10,7 +10,7 @@ class InventoryTransationsReport extends Component
     {
         return view('livewire.inventory-transations-report')
             ->layout('layouts.app', [
-                'drawer_open' => true
+                'drawer_open' => true,
             ]);
     }
 }

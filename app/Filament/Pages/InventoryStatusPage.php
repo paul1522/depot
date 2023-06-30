@@ -7,14 +7,12 @@ use App\Models\Condition;
 use App\Models\Item;
 use App\Models\ItemLocation;
 use App\Models\Location;
-use Faker\Provider\Text;
 use Filament\Forms;
-use Filament\Tables;
 use Filament\Pages;
+use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTable
 {
@@ -22,16 +20,13 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
 
     protected static ?string $navigationLabel = 'Inventory Status';
 
-    protected static ?string $title = 'Inventory Status Report';
+    protected static ?string $title = 'Inventory Status Admin Report';
 
     protected static ?string $navigationGroup = 'Reports';
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.inventory-status-page';
-
-    public bool $showForm = false;
-
 
     protected function getFormSchema(): array
     {
@@ -70,9 +65,9 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
             Tables\Columns\TextColumn::make('condition.name')->label('Condition'),
             Tables\Columns\TextColumn::make('quantity'),
         ];
+
         return $columns;
     }
-
 
     protected function getTableHeaderActions(): array
     {
@@ -92,22 +87,28 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
                     Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
-                    if (!$data['group']) return $query;
-                    return $query->whereRaw('`item_id` in (select id from items where `group` = \''. $data['group'] .'\')');
+                    if (! $data['group']) {
+                        return $query;
+                    }
+
+                    return $query->whereRaw('`item_id` in (select id from items where `group` = \''.$data['group'].'\')');
                 })
                 ->indicateUsing(function (array $data): ?string {
-                    return $data['group'] ? 'Group: ' . $data['group'] : null;
+                    return $data['group'] ? 'Group: '.$data['group'] : null;
                 }),
             Tables\Filters\Filter::make('manufacturer')
                 ->form([
                     Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
-                    if (!$data['manufacturer']) return $query;
-                    return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''. $data['manufacturer'] .'\')');
+                    if (! $data['manufacturer']) {
+                        return $query;
+                    }
+
+                    return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''.$data['manufacturer'].'\')');
                 })
                 ->indicateUsing(function (array $data): ?string {
-                    return $data['manufacturer'] ? 'Manufacturer: ' . $data['manufacturer'] : null;
+                    return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
                 }),
             Tables\Filters\SelectFilter::make('location')
                 ->options($this->locationOptions())
@@ -146,7 +147,6 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
     {
         return DB::table('location_user')
             ->select('location_id')
-            ->where('user_id', '=', request()->user()->id)
             ->pluck('location_id')
             ->toArray();
     }

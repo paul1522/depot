@@ -7,12 +7,12 @@ use App\Models\Condition;
 use App\Models\Item;
 use App\Models\ItemLocation;
 use App\Models\Location;
+use Filament\Forms;
+use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Filament\Tables;
-use Filament\Forms;
 
 class InventoryStatusReport extends Component implements Tables\Contracts\HasTable
 {
@@ -22,12 +22,12 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
     {
         return view('livewire.inventory-status-report')
             ->layout('layouts.app', [
-                'drawer_open' => true
+                'drawer_open' => true,
             ]);
     }
 
     public function getTableQuery(): Builder|Relation
-        // Must be public for FilamentExportHeaderAction
+    // Must be public for FilamentExportHeaderAction
     {
         return ItemLocation::query()
             ->join('items', 'items.id', '=', 'item_locations.item_id')
@@ -41,7 +41,6 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
             ->orderBy('conditions.name');
     }
 
-
     protected function getTableColumns(): array
     {
         $columns = [
@@ -54,6 +53,7 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
             Tables\Columns\TextColumn::make('condition.name')->label('Condition'),
             Tables\Columns\TextColumn::make('quantity'),
         ];
+
         return $columns;
     }
 
@@ -66,6 +66,7 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
                 ->fileNamePrefix('Depot Inventory Status Report'),
         ];
     }
+
     protected function getTableFilters(): array
     {
         return [
@@ -74,22 +75,28 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
                     Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
-                    if (!$data['group']) return $query;
-                    return $query->whereRaw('`item_id` in (select id from items where `group` = \''. $data['group'] .'\')');
+                    if (! $data['group']) {
+                        return $query;
+                    }
+
+                    return $query->whereRaw('`item_id` in (select id from items where `group` = \''.$data['group'].'\')');
                 })
                 ->indicateUsing(function (array $data): ?string {
-                    return $data['group'] ? 'Group: ' . $data['group'] : null;
+                    return $data['group'] ? 'Group: '.$data['group'] : null;
                 }),
             Tables\Filters\Filter::make('manufacturer')
                 ->form([
                     Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
                 ])
                 ->query(function (Builder $query, array $data): Builder {
-                    if (!$data['manufacturer']) return $query;
-                    return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''. $data['manufacturer'] .'\')');
+                    if (! $data['manufacturer']) {
+                        return $query;
+                    }
+
+                    return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''.$data['manufacturer'].'\')');
                 })
                 ->indicateUsing(function (array $data): ?string {
-                    return $data['manufacturer'] ? 'Manufacturer: ' . $data['manufacturer'] : null;
+                    return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
                 }),
             Tables\Filters\SelectFilter::make('location')
                 ->options($this->locationOptions())
