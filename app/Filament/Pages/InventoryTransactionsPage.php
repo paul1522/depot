@@ -36,7 +36,8 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
         // Must be public for FilamentExportHeaderAction
     {
         return Transaction::query()
-            ->select(['transactions.id', 'transactions.date', 'transactions.item_location_id', 'transactions.quantity', 'transactions.description'])
+            ->select(['transactions.id', 'transactions.date', 'transactions.item_location_id', 'transactions.quantity', 'transactions.description',
+                'item_locations.location_id', 'item_locations.condition_id'])
             ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id')
             ->orderBy('transactions.sbt_ttranno');
     }
