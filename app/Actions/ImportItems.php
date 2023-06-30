@@ -21,30 +21,7 @@ class ImportItems
             ->get();
 
         foreach ($iciloc as $iloc) {
-            $sbtItem = mb_ereg_replace('-[A-Z]$', '', trim($iloc->item));
-            $charterItem = $this->findCharterItem($sbtItem);
-
-            $itemKey = [
-                'sbt_item' => $sbtItem,
-            ];
-            $itemData = [
-                'key' => $charterItem?->key ?? '---',
-                'supplier_key' => $charterItem->supplier_key ?? '---',
-                'description' => $charterItem->description ?? $this->getItmdesc($sbtItem),
-                'group' => $charterItem->group ?? '---',
-                'manufacturer' => $this->getManufacturer($sbtItem),
-            ];
-
-            $item = Item::firstOrCreate($itemKey, $itemData);
-
-            if ($item->wasRecentlyCreated) continue;
-
-            if ($item->key == '---') $item->key = $charterItem?->key ?? '---';
-            if ($item->supplier_key == '---') $item->supplier_key = $charterItem->supplier_key ?? '---';
-            if ($item->description == '---') $item->description = $charterItem->description ?? $this->getItmdesc($sbtItem);
-            if ($item->group == '---') $item->group = $charterItem->group ?? '---';
-            if ($item->manufacturer == '---') $item->manufacturer = $this->getManufacturer($sbtItem);
-            $item->save();
+            $this->handleIloc($iloc);
         }
     }
 
@@ -85,5 +62,50 @@ class ImportItems
             ->first();
 
         return mb_ereg_replace(';[A-Z]+', '', $icmanu?->name ?? '---');
+    }
+
+    public function handleIloc(mixed $iloc): void
+    {
+        $sbtItem = mb_ereg_replace('-[A-Z]$', '', trim($iloc->item));
+        $charterItem = $this->findCharterItem($sbtItem);
+
+        $itemKey = [
+            'sbt_item' => $sbtItem,
+        ];
+        $itemData = [
+            'key' => $charterItem?->key ?? '---',
+            'supplier_key' => $charterItem->supplier_key ?? '---',
+            'description' => $charterItem->description ?? $this->getItmdesc($sbtItem),
+            'group' => $charterItem->group ?? '---',
+            'manufacturer' => $this->getManufacturer($sbtItem),
+        ];
+
+        $item = Item::firstOrCreate($itemKey, $itemData);
+
+        if ($item->wasRecentlyCreated) {
+            return;
+        }
+
+        $this->fillInTheBlanks($item, $charterItem, $sbtItem);
+    }
+
+    public function fillInTheBlanks(Item $item, ?CharterItem $charterItem, string $sbtItem): void
+    {
+        if ($item->key == '---') {
+            $item->key = $charterItem?->key ?? '---';
+        }
+        if ($item->supplier_key == '---') {
+            $item->supplier_key = $charterItem->supplier_key ?? '---';
+        }
+        if ($item->description == '---') {
+            $item->description = $charterItem->description ?? $this->getItmdesc($sbtItem);
+        }
+        if ($item->group == '---') {
+            $item->group = $charterItem->group ?? '---';
+        }
+        if ($item->manufacturer == '---') {
+            $item->manufacturer = $this->getManufacturer($sbtItem);
+        }
+        $item->save();
     }
 }
