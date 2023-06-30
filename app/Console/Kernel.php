@@ -5,11 +5,16 @@ namespace App\Console;
 use App\Actions\ImportItemLocations;
 use App\Actions\ImportItems;
 use App\Actions\ImportLocations;
+use App\Actions\ImportTransactions;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    protected $commands = [
+        ImportTransactions::class,
+    ];
+
     /**
      * Define the application's command schedule.
      */
@@ -19,6 +24,7 @@ class Kernel extends ConsoleKernel
             ImportLocations::run();
             ImportItems::run();
             ImportItemLocations::run();
+            ImportTransactions::run();
         })->everyTwoHours();
     }
 
