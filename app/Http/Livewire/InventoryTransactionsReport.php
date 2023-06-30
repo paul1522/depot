@@ -62,7 +62,7 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
             FilamentExportHeaderAction::make('Export')
                 ->disableAdditionalColumns()
                 ->disableFilterColumns()
-                ->fileNamePrefix('Depot Inventory Transactions Admin Report'),
+                ->fileNamePrefix('Depot Inventory Transactions Report'),
         ];
     }
 
