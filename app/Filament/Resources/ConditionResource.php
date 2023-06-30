@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ConditionResource\Pages;
 use App\Models\Condition;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;

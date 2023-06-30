@@ -3,7 +3,6 @@
 namespace App\Http\Livewire;
 
 use App\Models\Item;
-use App\Models\ItemLocation;
 use App\Models\Location;
 use Filament\Forms;
 use Livewire\Component;
@@ -12,8 +11,8 @@ class ShowItem extends Component implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
-
     private Item $item;
+
     private Location $location;
 
     public function mount($item, $location): void
@@ -29,7 +28,7 @@ class ShowItem extends Component implements Forms\Contracts\HasForms
             'location' => $this->location,
         ])
             ->layout('layouts.app', [
-                'drawer_open' => false
+                'drawer_open' => false,
             ]);
     }
 }

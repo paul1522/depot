@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
                 NavigationItem::make('Return to Catalog')
                     ->url(route('catalog.show'))
                     ->icon('heroicon-o-link')
-                    ->sort(999)
+                    ->sort(999),
             ]);
         });
     }

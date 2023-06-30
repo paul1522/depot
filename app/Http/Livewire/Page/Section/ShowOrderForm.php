@@ -5,7 +5,6 @@ namespace App\Http\Livewire\Page\Section;
 use App\Models\BillOfMaterials;
 use App\Models\CartedItem;
 use App\Models\Item;
-use App\Models\ItemLocation;
 use App\Models\Location;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
@@ -13,6 +12,7 @@ use Livewire\Component;
 class ShowOrderForm extends Component
 {
     public Item $item;
+
     public Location $location;
 
     public $input = [];

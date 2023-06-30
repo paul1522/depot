@@ -5,8 +5,6 @@ namespace App\Http\Livewire\Page\Section;
 use App\Models\BillOfMaterials;
 use App\Models\Document;
 use App\Models\Item;
-use App\Models\ItemLocation;
-use App\Models\Location;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;

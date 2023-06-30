@@ -31,7 +31,7 @@ class ShowCart extends Component implements HasTable
     {
         return view('livewire.cart')
             ->layout('layouts.app', [
-                'drawer_open' => false
+                'drawer_open' => false,
             ]);
     }
 

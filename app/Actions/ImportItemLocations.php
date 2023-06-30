@@ -28,7 +28,9 @@ class ImportItemLocations
             $matches = [];
             $conditionCode = null;
             if (mb_ereg('-([A-Z])', $iloc->item, $matches)) {
-                if (sizeof($matches) === 2) $conditionCode = $matches[1];
+                if (count($matches) === 2) {
+                    $conditionCode = $matches[1];
+                }
             }
 
             $sbtItem = mb_ereg_replace('-.$', '', $iloc->item);
@@ -60,13 +62,19 @@ class ImportItemLocations
 
     private function getConditionId(?string $conditionCode): ?int
     {
-        if (!$conditionCode) $condition = Condition::whereNull('sbt_suffix')->first();
-        else $condition = Condition::where('sbt_suffix', '=', $conditionCode)->first();
-        if ($condition) return $condition->id;
+        if (! $conditionCode) {
+            $condition = Condition::whereNull('sbt_suffix')->first();
+        } else {
+            $condition = Condition::where('sbt_suffix', '=', $conditionCode)->first();
+        }
+        if ($condition) {
+            return $condition->id;
+        }
         $condition = Condition::create([
-            'sbt_suffix' => !$conditionCode ? null : $conditionCode,
+            'sbt_suffix' => ! $conditionCode ? null : $conditionCode,
             'name' => "-{$conditionCode}-",
         ]);
+
         return $condition->id;
     }
 }

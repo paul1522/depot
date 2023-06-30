@@ -16,7 +16,7 @@ class ShowOrders extends Component implements Tables\Contracts\HasTable
     {
         return view('livewire.orders')
             ->layout('layouts.app', [
-                'drawer_open' => false
+                'drawer_open' => false,
             ]);
     }
 

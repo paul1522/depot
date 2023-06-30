@@ -9,7 +9,6 @@ use Closure;
 use Filament\Forms;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -21,7 +20,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
     {
         return view('livewire.catalog')
             ->layout('layouts.app', [
-                'drawer_open' => false
+                'drawer_open' => false,
             ]);
     }
 
@@ -51,6 +50,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
             $columns[] = Tables\Columns\TextColumn::make('location.name')->label('Location')->sortable();
         }
         $columns[] = Tables\Columns\TextColumn::make('sum_quantity')->label('Quantity')->sortable();
+
         return $columns;
     }
 
@@ -79,22 +79,28 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
                 Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
             ])
             ->query(function (Builder $query, array $data): Builder {
-                if (!$data['group']) return $query;
-                return $query->whereRaw('`item_id` in (select id from items where `group` = \''. $data['group'] .'\')');
+                if (! $data['group']) {
+                    return $query;
+                }
+
+                return $query->whereRaw('`item_id` in (select id from items where `group` = \''.$data['group'].'\')');
             })
             ->indicateUsing(function (array $data): ?string {
-                return $data['group'] ? 'Group: ' . $data['group'] : null;
+                return $data['group'] ? 'Group: '.$data['group'] : null;
             });
         $filters[] = Tables\Filters\Filter::make('manufacturer')
             ->form([
                 Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
             ])
             ->query(function (Builder $query, array $data): Builder {
-                if (!$data['manufacturer']) return $query;
-                return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''. $data['manufacturer'] .'\')');
+                if (! $data['manufacturer']) {
+                    return $query;
+                }
+
+                return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''.$data['manufacturer'].'\')');
             })
             ->indicateUsing(function (array $data): ?string {
-                return $data['manufacturer'] ? 'Manufacturer: ' . $data['manufacturer'] : null;
+                return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
             });
 
         return $filters;
@@ -104,7 +110,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
     {
         return fn (ItemLocation $itemLocation): string => route('item.show', [
             'item' => $itemLocation->item_id,
-            'location' => $itemLocation->location_id
+            'location' => $itemLocation->location_id,
         ]);
     }
 
