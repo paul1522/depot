@@ -44,9 +44,7 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
             ->join('items', 'items.id', '=', 'item_locations.item_id')
             ->join('locations', 'locations.id', '=', 'item_locations.location_id')
             ->join('conditions', 'conditions.id', '=', 'item_locations.condition_id')
-            ->join('location_user', 'location_user.location_id', '=', 'locations.id')
             ->where('quantity', '>', 0)
-            ->where('location_user.user_id', '=', request()->user()->id)
             ->orderBy('items.description')
             ->orderBy('locations.name')
             ->orderBy('conditions.name');
@@ -121,7 +119,7 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
 
     private function locationOptions(): array
     {
-        return Location::whereIn('id', $this->locationIds())->orderBy('name')->pluck('name', 'id')->toArray();
+        return Location::whereRaw(1)->orderBy('name')->pluck('name', 'id')->toArray();
     }
 
     private function conditionOptions(): array
@@ -140,14 +138,6 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
     {
         return Item::distinct()
             ->pluck('manufacturer', 'manufacturer')
-            ->toArray();
-    }
-
-    protected function locationIds(): array
-    {
-        return DB::table('location_user')
-            ->select('location_id')
-            ->pluck('location_id')
             ->toArray();
     }
 }

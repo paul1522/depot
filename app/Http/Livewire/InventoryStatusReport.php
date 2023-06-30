@@ -30,6 +30,7 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
     // Must be public for FilamentExportHeaderAction
     {
         return ItemLocation::query()
+            ->select(['item_locations.id', 'item_locations.item_id', 'item_locations.location_id', 'item_locations.condition_id', 'item_locations.quantity'])
             ->join('items', 'items.id', '=', 'item_locations.item_id')
             ->join('locations', 'locations.id', '=', 'item_locations.location_id')
             ->join('conditions', 'conditions.id', '=', 'item_locations.condition_id')
