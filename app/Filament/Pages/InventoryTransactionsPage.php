@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\Condition;
 use App\Models\Item;
+use App\Models\ItemLocation;
 use App\Models\Location;
 use App\Models\Transaction;
 use Filament\Forms;
@@ -34,7 +35,10 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
     public function getTableQuery(): Builder|Relation
         // Must be public for FilamentExportHeaderAction
     {
-        return Transaction::query();
+        return Transaction::query()
+            ->select(['transactions.id', 'transactions.date', 'transactions.item_location_id', 'transactions.quantity', 'transactions.description'])
+            ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id')
+            ->orderBy('transactions.sbt_ttranno');
     }
 
     protected function getTableColumns(): array
@@ -78,7 +82,13 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
                         return $query;
                     }
 
-                    return $query->whereRaw('`item_id` in (select id from items where `group` = \''.$data['group'].'\')');
+                    return $query->whereIn('item_locations.item_id',
+                        Item::where(
+                            'group',
+                            '=',
+                            $data['group']
+                        )->pluck('id')
+                    );
                 })
                 ->indicateUsing(function (array $data): ?string {
                     return $data['group'] ? 'Group: '.$data['group'] : null;
@@ -92,23 +102,29 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
                         return $query;
                     }
 
-                    return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''.$data['manufacturer'].'\')');
+                    return $query->whereIn('item_locations.item_id',
+                        Item::where(
+                            'manufacturer',
+                            '=',
+                            $data['manufacturer']
+                        )->pluck('id')
+                    );
                 })
                 ->indicateUsing(function (array $data): ?string {
                     return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
                 }),
             Tables\Filters\SelectFilter::make('location')
                 ->options($this->locationOptions())
-                ->attribute('location.id'),
+                ->attribute('location_id'),
             Tables\Filters\SelectFilter::make('condition')
                 ->options($this->conditionOptions())
-                ->attribute('condition.id'),
+                ->attribute('condition_id'),
         ];
     }
 
     private function locationOptions(): array
     {
-        return Location::whereIn('id', $this->locationIds())->orderBy('name')->pluck('name', 'id')->toArray();
+        return Location::whereRaw(1)->orderBy('name')->pluck('name', 'id')->toArray();
     }
 
     private function conditionOptions(): array
@@ -127,14 +143,6 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
     {
         return Item::distinct()
             ->pluck('manufacturer', 'manufacturer')
-            ->toArray();
-    }
-
-    protected function locationIds(): array
-    {
-        return DB::table('location_user')
-            ->select('location_id')
-            ->pluck('location_id')
             ->toArray();
     }
 }
