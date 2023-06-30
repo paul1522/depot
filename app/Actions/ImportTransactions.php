@@ -48,6 +48,7 @@ class ImportTransactions
          * _R      IC     V
          * TI      IC     S         Transfer
          * TR      IC     S         Transfer
+         * RR      SO     C
          */
 
         $itemLocation = $this->getItemLocation($tran);
@@ -66,6 +67,8 @@ class ImportTransactions
             $this->handleTranTIICS($tran, $itemLocation);
         } elseif ($tran->trantyp == 'TR' && $tran->applid == 'IC' && $tran->orgtype == 'S') {
             $this->handleTranTIICS($tran, $itemLocation);
+        } elseif ($tran->trantyp == 'RR' && $tran->applid == 'SO' && $tran->orgtype == 'C') {
+            $this->handleTranRRSOC($tran, $itemLocation);
         } else {
             dd($tran);
         }
@@ -98,6 +101,22 @@ class ImportTransactions
             'sbt_orgno' => $tran->orgno,
             'quantity' => $tran->tqty,
             'description' => 'Inventory count adjustment',
+            'item_location_id' => $itemLocation->id,
+        ];
+
+        Transaction::firstOrCreate($key, $data);
+    }
+
+    private function handleTranRRSOC(mixed $tran, ItemLocation $itemLocation): void
+    {
+        $key = [
+            'sbt_ttranno' => $tran->ttranno,
+        ];
+        $data = [
+            'date' => SBT::date($tran->tdate),
+            'sbt_orgno' => $tran->orgno,
+            'quantity' => $tran->tqty,
+            'description' => 'Returned from SO #'.trim($tran->docno),
             'item_location_id' => $itemLocation->id,
         ];
 
