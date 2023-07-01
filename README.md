@@ -59,10 +59,14 @@ composer install
 cp .env.example .env
 edit .env
 php artisan key:generate
-npm run dev
-sail up
-sail pest
-sail art migrate:fresh --seed
+./vendor/bin/sail up
+
+# In a new terminal
+./vendor/bin/sail pest
+./vendor/bin/sail art migrate:fresh --seed
+
+# In a new terminal
+./vendor/bin/sail npm run dev
 browse http://localhost
 ```
 
