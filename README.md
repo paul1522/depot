@@ -52,21 +52,31 @@ Frameworks used:
 
 ## Install
 
+### Requirements
+
+  - Git
+  - Php 8.1+
+    - with xml, curl, and zip extensions  
+  - Composer
+  - Docker
+
 ```
 git clone https://github.com/paul1522/depot.git
 cd depot
-composer install
+php composer.phar install
 cp .env.example .env
 edit .env
 php artisan key:generate
 ./vendor/bin/sail up
 
 # In a new terminal
-./vendor/bin/sail pest
-./vendor/bin/sail art migrate:fresh --seed
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
 
 # In a new terminal
-./vendor/bin/sail npm run dev
+./vendor/bin/sail art migrate:fresh --seed
+./vendor/bin/sail pest
+
 browse http://localhost
 ```
 
