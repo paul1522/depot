@@ -26,12 +26,11 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
             ]);
     }
 
-
     public function getTableQuery(): Builder|Relation
-        // Must be public for FilamentExportHeaderAction
+    // Must be public for FilamentExportHeaderAction
     {
         return Transaction::query()
-            ->selectRaw('transactions.id, transactions.date, transactions.quantity, transactions.description, transactions.item_location_id')
+            ->selectRaw('transactions.id, transactions.date, transactions.quantity, transactions.description, transactions.item_location_id, item_locations.location_id')
             ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id')
             ->join('locations', 'locations.id', '=', 'item_locations.location_id')
             ->join('location_user', 'location_user.location_id', '=', 'locations.id')
@@ -99,10 +98,10 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
                 }),
             Tables\Filters\SelectFilter::make('location')
                 ->options($this->locationOptions())
-                ->attribute('location.id'),
+                ->attribute('item_location.location_id'),
             Tables\Filters\SelectFilter::make('condition')
                 ->options($this->conditionOptions())
-                ->attribute('condition.id'),
+                ->attribute('item_location.condition_id'),
         ];
     }
 
