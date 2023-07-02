@@ -12,7 +12,6 @@ use Filament\Pages;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\DB;
 
 class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTable
 {

@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\Condition;
 use App\Models\Item;
-use App\Models\ItemLocation;
 use App\Models\Location;
 use App\Models\Transaction;
 use Filament\Forms;
@@ -13,8 +12,6 @@ use Filament\Pages;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\DB;
-
 
 class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\HasTable
 {
@@ -30,10 +27,8 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
 
     protected static string $view = 'filament.pages.inventory-transactions-page';
 
-
-
     public function getTableQuery(): Builder|Relation
-        // Must be public for FilamentExportHeaderAction
+    // Must be public for FilamentExportHeaderAction
     {
         return Transaction::query()
             ->select(['transactions.id', 'transactions.date', 'transactions.item_location_id', 'transactions.quantity', 'transactions.description',
