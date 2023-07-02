@@ -4,12 +4,22 @@ namespace App\Actions;
 
 use App\Models\Item;
 use FilesystemIterator;
+use Illuminate\Console\Command;
 use Lorisleiva\Actions\Concerns\AsAction;
 use SplFileInfo;
 
 class ImportImages
 {
     use AsAction;
+
+    public string $commandSignature = 'import:images';
+
+    public string $commandDescription = 'Import product images from the old AT&T TTS Program';
+
+    public function asCommand(Command $command): void
+    {
+        $this->handle();
+    }
 
     public function handle(): void
     {

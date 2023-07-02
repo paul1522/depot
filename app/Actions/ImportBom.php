@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\BillOfMaterials;
 use App\Models\Item;
+use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -11,6 +12,15 @@ use Lorisleiva\Actions\Concerns\AsAction;
 class ImportBom
 {
     use AsAction;
+
+    public string $commandSignature = 'import:bom';
+
+    public string $commandDescription = 'Import bill of materials from the old AT&T TTS Program';
+
+    public function asCommand(Command $command): void
+    {
+        $this->handle();
+    }
 
     public function handle()
     {

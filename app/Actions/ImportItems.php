@@ -4,12 +4,22 @@ namespace App\Actions;
 
 use App\Models\CharterItem;
 use App\Models\Item;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class ImportItems
 {
     use AsAction;
+
+    public string $commandSignature = 'import:items';
+
+    public string $commandDescription = 'Import items from iciloc80';
+
+    public function asCommand(Command $command): void
+    {
+        $this->handle();
+    }
 
     public function handle(): void
     {

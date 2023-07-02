@@ -8,7 +8,6 @@ use App\Models\Item;
 use App\Models\ItemLocation;
 use App\Models\Location;
 use App\Models\Transaction;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
@@ -18,7 +17,8 @@ class ImportTransactions
     use AsAction;
 
     public string $commandSignature = 'import:transactions';
-    public string $commandDescription = 'Import ictran80';
+
+    public string $commandDescription = 'Import transactions ictran80';
 
     public function asCommand(Command $command): void
     {
@@ -52,7 +52,9 @@ class ImportTransactions
          */
 
         $itemLocation = $this->getItemLocation($tran);
-        if (!$itemLocation) return;
+        if (! $itemLocation) {
+            return;
+        }
         if ($tran->trantyp == ' R' && $tran->applid == 'PO' && $tran->orgtype == 'S') {
             $this->handleTranRPOS($tran, $itemLocation);
         } elseif ($tran->trantyp == 'PI' && $tran->applid == 'IC' && $tran->orgtype == '') {
@@ -84,7 +86,7 @@ class ImportTransactions
             'date' => SBT::date($tran->tdate),
             'sbt_orgno' => $tran->orgno,
             'quantity' => $tran->tqty,
-            'description' => "Received on PO #".trim($tran->docno),
+            'description' => 'Received on PO #'.trim($tran->docno),
             'item_location_id' => $itemLocation->id,
         ];
 
@@ -146,13 +148,13 @@ class ImportTransactions
         ];
         switch ($tran->orgno) {
             case 'MPP':
-                $description = 'Internal transfer on SO #'. trim($tran->docno);
+                $description = 'Internal transfer on SO #'.trim($tran->docno);
                 break;
             case 'SCRAP':
-                $description = 'Scrapped on SO #'. trim($tran->docno);
+                $description = 'Scrapped on SO #'.trim($tran->docno);
                 break;
             case 'CH/NC':
-                $description = 'Shipped on SO #'. trim($tran->docno);
+                $description = 'Shipped on SO #'.trim($tran->docno);
                 break;
             default:
                 dd($tran);
@@ -171,10 +173,13 @@ class ImportTransactions
     private function getItemLocation(mixed $tran): ?ItemLocation
     {
         $item = Item::whereSbtItem(SBT::itemPrefix($tran->item))->first();
-        if (!$item) return null;
+        if (! $item) {
+            return null;
+        }
         $suffix = SBT::itemSuffix($tran->item);
         $condition = $suffix ? Condition::whereSbtSuffix($suffix)->first() : Condition::whereNull('sbt_suffix')->first();
         $location = Location::whereSbtLoctid($tran->loctid)->first();
+
         return ItemLocation::whereItemId($item->id)
             ->whereLocationId($location->id)
             ->whereConditionId($condition->id)

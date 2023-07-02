@@ -3,12 +3,22 @@
 namespace App\Actions;
 
 use App\Models\Location;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class ImportLocations
 {
     use AsAction;
+
+    public string $commandSignature = 'import:locations';
+
+    public string $commandDescription = 'Import locations from icloct80';
+
+    public function asCommand(Command $command): void
+    {
+        $this->handle();
+    }
 
     public function handle(): void
     {

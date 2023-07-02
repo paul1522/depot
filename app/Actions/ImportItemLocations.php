@@ -6,12 +6,22 @@ use App\Models\Condition;
 use App\Models\Item;
 use App\Models\ItemLocation;
 use App\Models\Location;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class ImportItemLocations
 {
     use AsAction;
+
+    public string $commandSignature = 'import:item-locations';
+
+    public string $commandDescription = 'Import item locations from iciloc80';
+
+    public function asCommand(Command $command): void
+    {
+        $this->handle();
+    }
 
     public function handle(): void
     {
