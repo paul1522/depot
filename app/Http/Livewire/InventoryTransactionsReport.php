@@ -20,10 +20,7 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
 
     public function render()
     {
-        return view('livewire.inventory-transactions-report')
-            ->layout('layouts.app', [
-                'drawer_open' => true,
-            ]);
+        return view('livewire.inventory-transactions-report');
     }
 
     public function getTableQuery(): Builder|Relation

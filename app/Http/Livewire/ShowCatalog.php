@@ -18,10 +18,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
 
     public function render()
     {
-        return view('livewire.catalog')
-            ->layout('layouts.app', [
-                'drawer_open' => false,
-            ]);
+        return view('livewire.catalog');
     }
 
     protected function getTableQuery(): Builder

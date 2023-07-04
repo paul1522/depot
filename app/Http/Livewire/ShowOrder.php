@@ -27,10 +27,7 @@ class ShowOrder extends Component implements Tables\Contracts\HasTable
 
     public function render()
     {
-        return view('livewire.order')
-            ->layout('layouts.app', [
-                'drawer_open' => false,
-            ]);
+        return view('livewire.order');
     }
 
     protected function getFormSchema(): array

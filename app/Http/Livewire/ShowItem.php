@@ -26,9 +26,6 @@ class ShowItem extends Component implements Forms\Contracts\HasForms
         return view('livewire.item', [
             'item' => $this->item,
             'location' => $this->location,
-        ])
-            ->layout('layouts.app', [
-                'drawer_open' => false,
-            ]);
+        ]);
     }
 }

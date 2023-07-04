@@ -7,8 +7,8 @@ use Illuminate\View\View;
 
 class AppLayout extends Component
 {
-    public function render(): View
+    public function render()
     {
-        return view('layouts.app', ['drawer_open' => true]);
+        return view('layouts.app');
     }
 }
