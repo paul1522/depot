@@ -20,3 +20,5 @@ yarn-error.log
 database/data/
 .ssh/
 bin/
+
+composer.phar

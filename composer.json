@@ -23,6 +23,7 @@
     "require-dev": {
         "doctrine/dbal": "^3.6",
         "fakerphp/faker": "^1.9.1",
+        "laravel/dusk": "^7.7",
         "laravel/envoy": "^2.8",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
