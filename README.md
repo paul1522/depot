@@ -74,9 +74,9 @@ php artisan key:generate
 ./vendor/bin/sail npm run dev
 
 # In a new terminal
-./vendor/bin/sail art migrate:fresh --seed
 ./vendor/bin/sail pest
-
+./vendor/bin/sail dusk
+./vendor/bin/sail art migrate:fresh --seed
 browse http://localhost
 ```
 

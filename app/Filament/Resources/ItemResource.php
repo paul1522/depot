@@ -24,12 +24,12 @@ class ItemResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('key')->required()->maxLength(255),
-                Forms\Components\TextInput::make('supplier_key')->maxLength(255),
-                Forms\Components\TextInput::make('description')->required()->maxLength(255),
-                Forms\Components\TextInput::make('group')->maxLength(255),
-                Forms\Components\TextInput::make('manufacturer')->maxLength(255),
-                Forms\Components\TextInput::make('sbt_item')->required()->maxLength(255),
+                Forms\Components\TextInput::make('key')->label('Charter key')->required()->maxLength(255),
+                Forms\Components\TextInput::make('supplier_key')->label('Charter supplier key')->maxLength(255),
+                Forms\Components\TextInput::make('description')->label('Charter description')->required()->maxLength(255),
+                Forms\Components\TextInput::make('group')->label('Charter group')->maxLength(255),
+                Forms\Components\TextInput::make('manufacturer')->label('Charter manufacturer')->maxLength(255),
+                Forms\Components\TextInput::make('sbt_item')->label('SBT item prefix')->required()->maxLength(255),
                 Forms\Components\FileUpload::make('image_path')
                     ->label('Upload product image')
                     ->disk('public')
@@ -51,7 +51,7 @@ class ItemResource extends Resource
                 Tables\Columns\TextColumn::make('supplier_key')->label('Charter supplier key')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('description')->label('Charter description')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('group')->label('Charter group')->sortable()->searchable(),
-                Tables\Columns\TextColumn::make('manufacturer')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('manufacturer')->label('Charter manufacturer')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('sbt_item')->label('SBT item prefix')->sortable()->searchable(),
                 // Tables\Columns\TextColumn::make('created_at')->dateTime(),
                 // Tables\Columns\TextColumn::make('updated_at')->dateTime(),

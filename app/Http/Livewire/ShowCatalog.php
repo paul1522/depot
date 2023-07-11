@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\Item;
 use App\Models\ItemLocation;
 use App\Models\Location;
@@ -138,4 +139,15 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
             ->pluck('location_id')
             ->toArray();
     }
+
+    protected function getTableHeaderActions(): array
+    {
+        return [
+            FilamentExportHeaderAction::make('Export')
+                ->disableAdditionalColumns()
+                ->disableFilterColumns()
+                ->fileNamePrefix('Depot Catalog'),
+        ];
+    }
+
 }
