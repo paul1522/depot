@@ -30,6 +30,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
         return ItemLocation::query()
             ->select('item_id', 'location_id', DB::raw('sum(quantity) as quantity'), DB::raw('min(item_locations.id) as id'))
             ->join('items', 'items.id', '=', 'item_locations.item_id')
+            ->whereIn('location_id', request()->user()->locations->pluck('id'))
             ->groupBy(['item_id', 'location_id']);
     }
 
@@ -49,7 +50,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
         return $columns;
     }
 
-    
+
 
     protected function getDefaultTableSortColumn(): ?string
     {
