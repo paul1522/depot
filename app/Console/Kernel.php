@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
             ImportItems::run();
             ImportItemLocations::run();
             ImportTransactions::run();
-        })->everyTwoHours();
+        })->hourly();
     }
 
     /**

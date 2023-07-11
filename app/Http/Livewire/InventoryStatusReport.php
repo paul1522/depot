@@ -49,7 +49,7 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
             Tables\Columns\TextColumn::make('item.manufacturer')->label('Manufacturer'),
             Tables\Columns\TextColumn::make('location.name')->label('Location'),
             Tables\Columns\TextColumn::make('condition.name')->label('Condition'),
-            Tables\Columns\TextColumn::make('quantity'),
+            Tables\Columns\TextColumn::make('quantity')->alignRight(),
         ];
 
         return $columns;

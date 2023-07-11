@@ -45,7 +45,7 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
             Tables\Columns\TextColumn::make('item_location.item.manufacturer')->label('Manufacturer'),
             Tables\Columns\TextColumn::make('item_location.location.name')->label('Location'),
             Tables\Columns\TextColumn::make('item_location.condition.name')->label('Condition'),
-            Tables\Columns\TextColumn::make('quantity')->label('Qty'),
+            Tables\Columns\TextColumn::make('quantity')->label('Qty')->alignRight(),
             Tables\Columns\TextColumn::make('description')->label('Reference')->searchable(),
         ];
 
