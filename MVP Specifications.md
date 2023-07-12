@@ -241,3 +241,5 @@ able to register.
 - [ ] Each model has a created_by and updated_by nullable bigint property.
 - [ ] The created_by property is set to the user's id whenever a model is created.
 - [ ] The updated_by property is set to the user's id whenever a model is updated.
+
+### User Activity Report - To Be Discussed

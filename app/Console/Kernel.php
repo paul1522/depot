@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Actions\ImportCharterItems;
 use App\Actions\ImportItemLocations;
 use App\Actions\ImportItems;
 use App\Actions\ImportLocations;
@@ -13,6 +14,7 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         ImportTransactions::class,
+        ImportCharterItems::class,
     ];
 
     /**
