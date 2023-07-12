@@ -6,13 +6,12 @@ use AlperenErsoy\FilamentExport\Actions\FilamentExportHeaderAction;
 use App\Models\BillOfMaterials;
 use App\Models\Item;
 use App\Models\ItemLocation;
-use App\Models\Location;
 use Closure;
+use Exception;
 use Filament\Forms;
 use Filament\Tables;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -20,18 +19,25 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.catalog');
     }
 
     public function getTableQuery(): Builder
+    // Must be public for FilamentExportHeaderAction
     {
         return ItemLocation::query()
-            ->select('item_id', 'location_id', DB::raw('sum(quantity) as quantity'), DB::raw('min(item_locations.id) as id'))
+            ->select('item_id', 'location_id', DB::raw('sum(quantity) as quantity'),
+                DB::raw('min(item_locations.id) as id'))
             ->join('items', 'items.id', '=', 'item_locations.item_id')
             ->whereIn('location_id', request()->user()->locations->pluck('id'))
             ->groupBy(['item_id', 'location_id']);
+    }
+
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 20, 50, 100];
     }
 
     protected function getTableColumns(): array
@@ -42,7 +48,7 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
         $columns[] = Tables\Columns\TextColumn::make('item.supplier_key')->label('Supplier Key')->sortable()->searchable();
         $columns[] = Tables\Columns\TextColumn::make('item.group')->label('Group')->sortable();
         $columns[] = Tables\Columns\TextColumn::make('item.manufacturer')->label('Manufacturer')->sortable();
-        if (count($this->locationIds()) > 1) {
+        if (request()->user()->locations->count() > 1) {
             $columns[] = Tables\Columns\TextColumn::make('location.name')->label('Location')->sortable();
         }
         $columns[] = Tables\Columns\TextColumn::make('quantity')->label('Quantity')->sortable()->alignRight();
@@ -50,29 +56,90 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
         return $columns;
     }
 
-
-
     protected function getDefaultTableSortColumn(): ?string
     {
         return 'item.description';
     }
 
+    protected function getDefaultTableSortDirection(): string
+    {
+        return 'asc';
+    }
+
+    protected function shouldPersistTableSortInSession(): bool
+    {
+        return true;
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
+
+    protected function shouldPersistTableSearchInSession(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
     protected function getTableFilters(): array
     {
         $filters = [];
 
-        $filters[] = Tables\Filters\Filter::make('exclude_out_of_stock_items')
+        $filters[] = $this->getExcludeOutOfStockItemsTableFilter();
+        $filters[] = $this->getExcludePartsAndAccessoriesTableFilter();
+        if (request()->user()->locations->count() > 1) {
+            $filters[] = $this->getLocationTableFilter();
+        }
+        $filters[] = $this->getGroupTableFilter();
+        $filters[] = $this->getManufacturerTableFilter();
+
+        return $filters;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getExcludeOutOfStockItemsTableFilter(): Tables\Filters\Filter
+    {
+        return Tables\Filters\Filter::make('exclude_out_of_stock_items')
             ->query(fn (Builder $query): Builder => $query->where('item_locations.quantity', '<>', 0))
             ->default();
-        $filters[] = Tables\Filters\Filter::make('exclude_parts_and_accessories')
-            ->query(fn (Builder $query): Builder => $query->whereNotIn('item_id',  BillOfMaterials::pluck('item_id')))
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getExcludePartsAndAccessoriesTableFilter(): Tables\Filters\Filter
+    {
+        return Tables\Filters\Filter::make('exclude_parts_and_accessories')
+            ->query(fn (Builder $query): Builder => $query->whereNotIn('item_id', BillOfMaterials::pluck('item_id')))
             ->default();
-        if (count($this->locationIds()) > 1) {
-            $filters[] = Tables\Filters\SelectFilter::make('location')
-                ->options($this->locationOptions())
-                ->attribute('location_id');
-        }
-        $filters[] = Tables\Filters\Filter::make('group')
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getLocationTableFilter(): Tables\Filters\SelectFilter
+    {
+        return Tables\Filters\SelectFilter::make('location')
+            ->options($this->locationOptions())
+            ->attribute('location_id');
+    }
+
+    private function locationOptions(): array
+    {
+        return request()->user()->locations->pluck('name', 'id')->toArray();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getGroupTableFilter(): Tables\Filters\Filter
+    {
+        return Tables\Filters\Filter::make('group')
             ->form([
                 Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
             ])
@@ -86,7 +153,21 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
             ->indicateUsing(function (array $data): ?string {
                 return $data['group'] ? 'Group: '.$data['group'] : null;
             });
-        $filters[] = Tables\Filters\Filter::make('manufacturer')
+    }
+
+    private function groupOptions(): array
+    {
+        return Item::distinct()
+            ->pluck('group', 'group')
+            ->toArray();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getManufacturerTableFilter(): Tables\Filters\Filter
+    {
+        return Tables\Filters\Filter::make('manufacturer')
             ->form([
                 Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
             ])
@@ -100,8 +181,13 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
             ->indicateUsing(function (array $data): ?string {
                 return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
             });
+    }
 
-        return $filters;
+    private function manufacturerOptions(): array
+    {
+        return Item::distinct()
+            ->pluck('manufacturer', 'manufacturer')
+            ->toArray();
     }
 
     protected function getTableRecordUrlUsing(): ?Closure
@@ -112,34 +198,9 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
         ]);
     }
 
-    private function locationOptions(): array
-    {
-        return Location::whereIn('id', $this->locationIds())->orderBy('name')->pluck('name', 'id')->toArray();
-    }
-
-    private function groupOptions(): array
-    {
-        return Item::distinct()
-            ->pluck('group', 'group')
-            ->toArray();
-    }
-
-    private function manufacturerOptions(): array
-    {
-        return Item::distinct()
-            ->pluck('manufacturer', 'manufacturer')
-            ->toArray();
-    }
-
-    protected function locationIds(): array
-    {
-        return DB::table('location_user')
-            ->select('location_id')
-            ->where('user_id', '=', request()->user()->id)
-            ->pluck('location_id')
-            ->toArray();
-    }
-
+    /**
+     * @throws Exception
+     */
     protected function getTableHeaderActions(): array
     {
         return [
@@ -149,5 +210,4 @@ class ShowCatalog extends Component implements Tables\Contracts\HasTable
                 ->fileNamePrefix('Depot Catalog'),
         ];
     }
-
 }
