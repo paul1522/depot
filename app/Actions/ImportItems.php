@@ -60,7 +60,7 @@ class ImportItems
             ->where('item', 'regexp', $sbtItem.'(-[A-Z])?')
             ->first();
 
-        return $icitem?->itmdesc ?? '---';
+        return $icitem ? ($icitem->itmdesc.' '.$icitem->itmdes2) : '---';
     }
 
     private function getManufacturer(string $sbtItem): string
@@ -101,19 +101,19 @@ class ImportItems
 
     public function fillInTheBlanks(Item $item, ?CharterItem $charterItem, string $sbtItem): void
     {
-        if ($item->key == '---') {
+        if ($item->key === '---') {
             $item->key = $charterItem?->key ?? '---';
         }
-        if ($item->supplier_key == '---') {
+        if ($item->supplier_key === '---') {
             $item->supplier_key = $charterItem->supplier_key ?? '---';
         }
-        if ($item->description == '---') {
+        if ($item->description === '---') {
             $item->description = $charterItem->description ?? $this->getItmdesc($sbtItem);
         }
-        if ($item->group == '---') {
+        if ($item->group === '---') {
             $item->group = $charterItem->group ?? '---';
         }
-        if ($item->manufacturer == '---') {
+        if ($item->manufacturer === '---') {
             $item->manufacturer = $this->getManufacturer($sbtItem);
         }
         $item->save();
