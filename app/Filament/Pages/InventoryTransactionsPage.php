@@ -7,11 +7,14 @@ use App\Models\Condition;
 use App\Models\Item;
 use App\Models\Location;
 use App\Models\Transaction;
+use Carbon\Carbon;
+use Exception;
 use Filament\Forms;
 use Filament\Pages;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\DB;
 
 class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\HasTable
 {
@@ -31,101 +34,138 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
     // Must be public for FilamentExportHeaderAction
     {
         return Transaction::query()
-            ->select(['transactions.id', 'transactions.date', 'transactions.item_location_id', 'transactions.quantity', 'transactions.description',
-                'item_locations.location_id', 'item_locations.condition_id'])
+            ->select('transactions.id', DB::raw('transactions.quantity as transaction_quantity'),
+                'transactions.item_location_id', 'transactions.date', 'transactions.description')
             ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id')
-            ->orderBy('transactions.sbt_ttranno');
+            ->whereIn('item_locations.location_id', request()->user()->locations->pluck('id'));
     }
 
     protected function getTableColumns(): array
     {
-        $columns = [
-            Tables\Columns\TextColumn::make('date')->date(),
-            Tables\Columns\TextColumn::make('item_location.item.description')->label('Charter description')->searchable(),
-            Tables\Columns\TextColumn::make('item_location.item.sbt_item')->label('SBT item prefix')->searchable(),
-            Tables\Columns\TextColumn::make('item_location.item.key')->label('Charter key')->searchable(),
-            Tables\Columns\TextColumn::make('item_location.item.supplier_key')->label('Charter supplier key')->searchable(),
-            Tables\Columns\TextColumn::make('item_location.item.group')->label('Charter group'),
-            Tables\Columns\TextColumn::make('item_location.item.manufacturer')->label('Manufacturer'),
-            Tables\Columns\TextColumn::make('item_location.location.name')->label('Location'),
-            Tables\Columns\TextColumn::make('item_location.condition.name')->label('Condition'),
-            Tables\Columns\TextColumn::make('quantity')->label('Qty'),
-            Tables\Columns\TextColumn::make('description')->label('Reference')->searchable(),
+        return [
+            Tables\Columns\TextColumn::make('date')->date()->sortable(),
+            Tables\Columns\TextColumn::make('item_location.item.description')->label('Charter description')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item_location.item.sbt_item')->label('SBT item prefix')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item_location.item.key')->label('Charter key')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item_location.item.supplier_key')->label('Charter supplier key')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item_location.item.group')->label('Charter group')->sortable(),
+            Tables\Columns\TextColumn::make('item_location.item.manufacturer')->label('Manufacturer')->sortable(),
+            Tables\Columns\TextColumn::make('item_location.location.name')->label('Location')->sortable(),
+            Tables\Columns\TextColumn::make('item_location.condition.name')->label('Condition')->sortable(),
+            Tables\Columns\TextColumn::make('transaction_quantity')->label('Qty')->alignRight()->sortable(),
+            Tables\Columns\TextColumn::make('description')->label('Reference')->searchable()->sortable(),
         ];
-
-        return $columns;
     }
 
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 20, 50, 100];
+    }
+
+    protected function getDefaultTableSortColumn(): ?string
+    {
+        return 'date';
+    }
+
+    protected function getDefaultTableSortDirection(): string
+    {
+        return 'desc';
+    }
+
+    protected function shouldPersistTableSortInSession(): bool
+    {
+        return true;
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
+
+    protected function shouldPersistTableSearchInSession(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
     protected function getTableHeaderActions(): array
     {
         return [
             FilamentExportHeaderAction::make('Export')
                 ->disableAdditionalColumns()
                 ->disableFilterColumns()
-                ->fileNamePrefix('Depot Inventory Transactions Admin Report'),
+                ->fileNamePrefix('Depot Inventory Transactions Report'),
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     protected function getTableFilters(): array
     {
         return [
-            Tables\Filters\Filter::make('group')
-                ->form([
-                    Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    if (! $data['group']) {
-                        return $query;
-                    }
-
-                    return $query->whereIn('item_locations.item_id',
-                        Item::where(
-                            'group',
-                            '=',
-                            $data['group']
-                        )->pluck('id')
-                    );
-                })
-                ->indicateUsing(function (array $data): ?string {
-                    return $data['group'] ? 'Group: '.$data['group'] : null;
-                }),
-            Tables\Filters\Filter::make('manufacturer')
-                ->form([
-                    Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    if (! $data['manufacturer']) {
-                        return $query;
-                    }
-
-                    return $query->whereIn('item_locations.item_id',
-                        Item::where(
-                            'manufacturer',
-                            '=',
-                            $data['manufacturer']
-                        )->pluck('id')
-                    );
-                })
-                ->indicateUsing(function (array $data): ?string {
-                    return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
-                }),
-            Tables\Filters\SelectFilter::make('location')
-                ->options($this->locationOptions())
-                ->attribute('location_id'),
-            Tables\Filters\SelectFilter::make('condition')
-                ->options($this->conditionOptions())
-                ->attribute('condition_id'),
+            $this->getDateTableFilter(),
+            $this->getGroupTableFilter(),
+            $this->getManufacturerTableFilter(),
+            $this->getLocationTableFilter(),
+            $this->getConditionTableFilter(),
         ];
     }
 
-    private function locationOptions(): array
+    /**
+     * @throws Exception
+     */
+    private function getDateTableFilter()
     {
-        return Location::whereRaw(1)->orderBy('name')->pluck('name', 'id')->toArray();
+        return Tables\Filters\Filter::make('date')
+            ->form([
+                Forms\Components\DatePicker::make('date_from'),
+                Forms\Components\DatePicker::make('date_until'),
+            ])
+            ->query(function (Builder $query, array $data): Builder {
+                return $query
+                    ->when(
+                        $data['date_from'],
+                        fn (Builder $query, $date): Builder => $query->whereDate('transactions.date', '>=', $date),
+                    )
+                    ->when(
+                        $data['date_until'],
+                        fn (Builder $query, $date): Builder => $query->whereDate('transactions.date', '<=', $date),
+                    );
+            })
+            ->indicateUsing(function (array $data): ?string {
+                if (! $data['date_from'] && ! $data['date_until']) {
+                    return null;
+                }
+
+                return trim(
+                    ($data['date_from'] ? ' From '.Carbon::parse($data['date_from'])->toFormattedDateString() : '').
+                    ($data['date_until'] ? ' Until '.Carbon::parse($data['date_until'])->toFormattedDateString() : '')
+                );
+            });
     }
 
-    private function conditionOptions(): array
+    /**
+     * @throws Exception
+     */
+    public function getGroupTableFilter(): Tables\Filters\Filter
     {
-        return Condition::whereRaw(1)->orderBy('name')->pluck('name', 'id')->toArray();
+        return Tables\Filters\Filter::make('group')
+            ->form([
+                Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
+            ])
+            ->query(function (Builder $query, array $data): Builder {
+                if (! $data['group']) {
+                    return $query;
+                }
+
+                return $query->where('items.group', '=', $data['group']);
+            })
+            ->indicateUsing(function (array $data): ?string {
+                return $data['group'] ? 'Group: '.$data['group'] : null;
+            });
     }
 
     private function groupOptions(): array
@@ -135,10 +175,61 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
             ->toArray();
     }
 
+    /**
+     * @throws Exception
+     */
+    public function getManufacturerTableFilter(): Tables\Filters\Filter
+    {
+        return Tables\Filters\Filter::make('manufacturer')
+            ->form([
+                Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
+            ])
+            ->query(function (Builder $query, array $data): Builder {
+                if (! $data['manufacturer']) {
+                    return $query;
+                }
+
+                return $query->where('items.manufacturer', '=', $data['manufacturer']);
+            })
+            ->indicateUsing(function (array $data): ?string {
+                return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
+            });
+    }
+
     private function manufacturerOptions(): array
     {
         return Item::distinct()
             ->pluck('manufacturer', 'manufacturer')
             ->toArray();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getLocationTableFilter(): Tables\Filters\SelectFilter
+    {
+        return Tables\Filters\SelectFilter::make('location')
+            ->options($this->locationOptions())
+            ->attribute('location.id');
+    }
+
+    private function locationOptions(): array
+    {
+        return Location::orderBy('name')->pluck('name', 'id')->toArray();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getConditionTableFilter(): Tables\Filters\SelectFilter
+    {
+        return Tables\Filters\SelectFilter::make('condition')
+            ->options($this->conditionOptions())
+            ->attribute('condition.id');
+    }
+
+    private function conditionOptions(): array
+    {
+        return Condition::orderBy('name')->pluck('name', 'id')->toArray();
     }
 }

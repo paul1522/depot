@@ -87,10 +87,7 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
     protected function getTableHeaderActions(): array
     {
         return [
-            FilamentExportHeaderAction::make('Export')
-                ->disableAdditionalColumns()
-                ->disableFilterColumns()
-                ->fileNamePrefix('Depot Inventory Transactions Report'),
+            FilamentExportHeaderAction::make('Export')->disableAdditionalColumns()->disableFilterColumns()->fileNamePrefix('Depot Inventory Transactions Report'),
         ];
     }
 
@@ -100,11 +97,8 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
     protected function getTableFilters(): array
     {
         return [
-            $this->getDateTableFilter(),
-            $this->getGroupTableFilter(),
-            $this->getManufacturerTableFilter(),
-            $this->getLocationTableFilter(),
-            $this->getConditionTableFilter(),
+            $this->getDateTableFilter(), $this->getGroupTableFilter(), $this->getManufacturerTableFilter(),
+            $this->getLocationTableFilter(), $this->getConditionTableFilter(),
         ];
     }
 
@@ -113,32 +107,20 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
      */
     private function getDateTableFilter()
     {
-        return Tables\Filters\Filter::make('date')
-            ->form([
-                Forms\Components\DatePicker::make('date_from'),
-                Forms\Components\DatePicker::make('date_until'),
-            ])
-            ->query(function (Builder $query, array $data): Builder {
-                return $query
-                    ->when(
-                        $data['date_from'],
-                        fn (Builder $query, $date): Builder => $query->whereDate('transactions.date', '>=', $date),
-                    )
-                    ->when(
-                        $data['date_until'],
-                        fn (Builder $query, $date): Builder => $query->whereDate('transactions.date', '<=', $date),
-                    );
-            })
-            ->indicateUsing(function (array $data): ?string {
-                if (! $data['date_from'] && ! $data['date_until']) {
-                    return null;
-                }
+        return Tables\Filters\Filter::make('date')->form([
+            Forms\Components\DatePicker::make('date_from'), Forms\Components\DatePicker::make('date_until'),
+        ])->query(function (Builder $query, array $data): Builder {
+            return $query->when($data['date_from'],
+                fn (Builder $query, $date): Builder => $query->whereDate('transactions.date', '>=',
+                    $date), )->when($data['date_until'],
+                        fn (Builder $query, $date): Builder => $query->whereDate('transactions.date', '<=', $date), );
+        })->indicateUsing(function (array $data): ?string {
+            if (! $data['date_from'] && ! $data['date_until']) {
+                return null;
+            }
 
-                return trim(
-                    ($data['date_from'] ? ' From '.Carbon::parse($data['date_from'])->toFormattedDateString() : '').
-                    ($data['date_until'] ? ' Until '.Carbon::parse($data['date_until'])->toFormattedDateString() : '')
-                );
-            });
+            return trim(($data['date_from'] ? ' From '.Carbon::parse($data['date_from'])->toFormattedDateString() : '').($data['date_until'] ? ' Until '.Carbon::parse($data['date_until'])->toFormattedDateString() : ''));
+        });
     }
 
     /**
@@ -146,27 +128,22 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
      */
     public function getGroupTableFilter(): Tables\Filters\Filter
     {
-        return Tables\Filters\Filter::make('group')
-            ->form([
-                Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
-            ])
-            ->query(function (Builder $query, array $data): Builder {
-                if (! $data['group']) {
-                    return $query;
-                }
+        return Tables\Filters\Filter::make('group')->form([
+            Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
+        ])->query(function (Builder $query, array $data): Builder {
+            if (! $data['group']) {
+                return $query;
+            }
 
-                return $query->where('items.group', '=', $data['group']);
-            })
-            ->indicateUsing(function (array $data): ?string {
-                return $data['group'] ? 'Group: '.$data['group'] : null;
-            });
+            return $query->where('items.group', '=', $data['group']);
+        })->indicateUsing(function (array $data): ?string {
+            return $data['group'] ? 'Group: '.$data['group'] : null;
+        });
     }
 
     private function groupOptions(): array
     {
-        return Item::distinct()
-            ->pluck('group', 'group')
-            ->toArray();
+        return Item::distinct()->pluck('group', 'group')->toArray();
     }
 
     /**
@@ -174,27 +151,22 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
      */
     public function getManufacturerTableFilter(): Tables\Filters\Filter
     {
-        return Tables\Filters\Filter::make('manufacturer')
-            ->form([
-                Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
-            ])
-            ->query(function (Builder $query, array $data): Builder {
-                if (! $data['manufacturer']) {
-                    return $query;
-                }
+        return Tables\Filters\Filter::make('manufacturer')->form([
+            Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
+        ])->query(function (Builder $query, array $data): Builder {
+            if (! $data['manufacturer']) {
+                return $query;
+            }
 
-                return $query->where('items.manufacturer', '=', $data['manufacturer']);
-            })
-            ->indicateUsing(function (array $data): ?string {
-                return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
-            });
+            return $query->where('items.manufacturer', '=', $data['manufacturer']);
+        })->indicateUsing(function (array $data): ?string {
+            return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
+        });
     }
 
     private function manufacturerOptions(): array
     {
-        return Item::distinct()
-            ->pluck('manufacturer', 'manufacturer')
-            ->toArray();
+        return Item::distinct()->pluck('manufacturer', 'manufacturer')->toArray();
     }
 
     /**
@@ -202,9 +174,7 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
      */
     public function getLocationTableFilter(): Tables\Filters\SelectFilter
     {
-        return Tables\Filters\SelectFilter::make('location')
-            ->options($this->locationOptions())
-            ->attribute('location.id');
+        return Tables\Filters\SelectFilter::make('location')->options($this->locationOptions())->attribute('location.id');
     }
 
     private function locationOptions(): array
@@ -217,9 +187,7 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
      */
     public function getConditionTableFilter(): Tables\Filters\SelectFilter
     {
-        return Tables\Filters\SelectFilter::make('condition')
-            ->options($this->conditionOptions())
-            ->attribute('condition.id');
+        return Tables\Filters\SelectFilter::make('condition')->options($this->conditionOptions())->attribute('condition.id');
     }
 
     private function conditionOptions(): array

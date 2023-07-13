@@ -7,6 +7,7 @@ use App\Models\Condition;
 use App\Models\Item;
 use App\Models\ItemLocation;
 use App\Models\Location;
+use Exception;
 use Filament\Forms;
 use Filament\Pages;
 use Filament\Tables;
@@ -27,103 +28,107 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
 
     protected static string $view = 'filament.pages.inventory-status-page';
 
-    protected function getFormSchema(): array
-    {
-        return [
-            Forms\Components\Fieldset::make('Report options')->schema([
-                Forms\Components\Placeholder::make('Placeholder')->content('Placeholder'),
-            ]),
-        ];
-    }
-
     public function getTableQuery(): Builder|Relation
     // Must be public for FilamentExportHeaderAction
+    // Filament Tables hates ->join()
     {
         return ItemLocation::query()
-            ->join('items', 'items.id', '=', 'item_locations.item_id')
-            ->join('locations', 'locations.id', '=', 'item_locations.location_id')
-            ->join('conditions', 'conditions.id', '=', 'item_locations.condition_id')
-            ->where('quantity', '>', 0)
-            ->orderBy('items.description')
-            ->orderBy('locations.name')
-            ->orderBy('conditions.name');
+            ->where('quantity', '<>', 0);
     }
 
     protected function getTableColumns(): array
     {
-        $columns = [
-            Tables\Columns\TextColumn::make('item.description')->label('Charter description')->searchable(),
-            Tables\Columns\TextColumn::make('item.sbt_item')->label('SBT item prefix')->searchable(),
-            Tables\Columns\TextColumn::make('item.key')->label('Charter key')->searchable(),
-            Tables\Columns\TextColumn::make('item.supplier_key')->label('Charter supplier key')->searchable(),
-            Tables\Columns\TextColumn::make('item.group')->label('Charter group'),
-            Tables\Columns\TextColumn::make('item.manufacturer')->label('Manufacturer'),
-            Tables\Columns\TextColumn::make('location.name')->label('Location'),
-            Tables\Columns\TextColumn::make('condition.name')->label('Condition'),
-            Tables\Columns\TextColumn::make('quantity'),
+        return [
+            Tables\Columns\TextColumn::make('item.description')->label('Description')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item.sbt_item')->label('SBT Item Prefix')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item.key')->label('Key')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item.supplier_key')->label('Supplier key')->searchable()->sortable(),
+            Tables\Columns\TextColumn::make('item.group')->label('Group')->sortable(),
+            Tables\Columns\TextColumn::make('item.manufacturer')->label('Manufacturer')->sortable(),
+            Tables\Columns\TextColumn::make('location.name')->label('Location')->sortable(),
+            Tables\Columns\TextColumn::make('condition.name')->label('Condition')->sortable(),
+            Tables\Columns\TextColumn::make('quantity')->alignRight()->sortable(),
         ];
-
-        return $columns;
     }
 
+    /**
+     * @throws Exception
+     */
     protected function getTableHeaderActions(): array
     {
         return [
             FilamentExportHeaderAction::make('Export')
                 ->disableAdditionalColumns()
                 ->disableFilterColumns()
-                ->fileNamePrefix('Depot Inventory Status Admin Report'),
+                ->fileNamePrefix('Depot Inventory Status Report'),
         ];
     }
 
+    protected function getTableRecordsPerPageSelectOptions(): array
+    {
+        return [10, 20, 50, 100];
+    }
+
+    protected function getDefaultTableSortColumn(): ?string
+    {
+        return 'item.description';
+    }
+
+    protected function getDefaultTableSortDirection(): string
+    {
+        return 'asc';
+    }
+
+    protected function shouldPersistTableSortInSession(): bool
+    {
+        return true;
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
+
+    protected function shouldPersistTableSearchInSession(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @throws Exception
+     */
     protected function getTableFilters(): array
     {
         return [
-            Tables\Filters\Filter::make('group')
-                ->form([
-                    Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    if (! $data['group']) {
-                        return $query;
-                    }
-
-                    return $query->whereRaw('`item_id` in (select id from items where `group` = \''.$data['group'].'\')');
-                })
-                ->indicateUsing(function (array $data): ?string {
-                    return $data['group'] ? 'Group: '.$data['group'] : null;
-                }),
-            Tables\Filters\Filter::make('manufacturer')
-                ->form([
-                    Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
-                ])
-                ->query(function (Builder $query, array $data): Builder {
-                    if (! $data['manufacturer']) {
-                        return $query;
-                    }
-
-                    return $query->whereRaw('`item_id` in (select id from items where `manufacturer` = \''.$data['manufacturer'].'\')');
-                })
-                ->indicateUsing(function (array $data): ?string {
-                    return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
-                }),
-            Tables\Filters\SelectFilter::make('location')
-                ->options($this->locationOptions())
-                ->attribute('location.id'),
-            Tables\Filters\SelectFilter::make('condition')
-                ->options($this->conditionOptions())
-                ->attribute('condition.id'),
+            $this->getGroupTableFilter(),
+            $this->getManufacturerTableFilter(),
+            $this->getLocationTableFilter(),
+            $this->getConditionTableFilter(),
         ];
     }
 
-    private function locationOptions(): array
+    /**
+     * @throws Exception
+     */
+    public function getGroupTableFilter(): Tables\Filters\Filter
     {
-        return Location::whereRaw(1)->orderBy('name')->pluck('name', 'id')->toArray();
-    }
+        return Tables\Filters\Filter::make('group')
+            ->form([
+                Forms\Components\Select::make('group')
+                    ->options($this->groupOptions())
+                    ->placeholder('All'),
+            ])
+            ->query(function (Builder $query, array $data): Builder {
+                if (! $data['group']) {
+                    return $query;
+                }
 
-    private function conditionOptions(): array
-    {
-        return Condition::whereRaw(1)->orderBy('name')->pluck('name', 'id')->toArray();
+                return $query->whereIn('item_locations.item_id',
+                    Item::whereGroup($data['group'])->pluck('id'));
+            })
+            ->indicateUsing(function (array $data): ?string {
+                return $data['group'] ? 'Group: '.$data['group'] : null;
+            });
     }
 
     private function groupOptions(): array
@@ -133,10 +138,64 @@ class InventoryStatusPage extends Pages\Page implements Tables\Contracts\HasTabl
             ->toArray();
     }
 
+    /**
+     * @throws Exception
+     */
+    public function getManufacturerTableFilter(): Tables\Filters\Filter
+    {
+        return Tables\Filters\Filter::make('manufacturer')
+            ->form([
+                Forms\Components\Select::make('manufacturer')
+                    ->options($this->manufacturerOptions())
+                    ->placeholder('All'),
+            ])
+            ->query(function (Builder $query, array $data): Builder {
+                if (! $data['manufacturer']) {
+                    return $query;
+                }
+
+                return $query->whereIn('item_locations.item_id',
+                    Item::whereManufacturer($data['manufacturer'])->pluck('id'));
+            })
+            ->indicateUsing(function (array $data): ?string {
+                return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
+            });
+    }
+
     private function manufacturerOptions(): array
     {
         return Item::distinct()
             ->pluck('manufacturer', 'manufacturer')
             ->toArray();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getLocationTableFilter(): Tables\Filters\SelectFilter
+    {
+        return Tables\Filters\SelectFilter::make('location')
+            ->options($this->locationOptions())
+            ->attribute('location.id');
+    }
+
+    private function locationOptions(): array
+    {
+        return Location::orderBy('name')->pluck('name', 'id')->toArray();
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function getConditionTableFilter(): Tables\Filters\SelectFilter
+    {
+        return Tables\Filters\SelectFilter::make('condition')
+            ->options($this->conditionOptions())
+            ->attribute('condition.id');
+    }
+
+    private function conditionOptions(): array
+    {
+        return Condition::orderBy('name')->pluck('name', 'id')->toArray();
     }
 }

@@ -25,11 +25,11 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
 
     public function getTableQuery(): Builder|Relation
     // Must be public for FilamentExportHeaderAction
+    // Filament Tables hates ->join()
     {
         return ItemLocation::query()
-            ->join('items', 'items.id', '=', 'item_locations.item_id')
-            ->whereIn('location_id', request()->user()->locations->pluck('id'))
-            ->where('quantity', '<>', 0);
+            ->where('quantity', '<>', 0)
+            ->whereIn('location_id', request()->user()->locations->pluck('id'));
     }
 
     protected function getTableRecordsPerPageSelectOptions(): array
@@ -109,14 +109,17 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
     {
         return Tables\Filters\Filter::make('group')
             ->form([
-                Forms\Components\Select::make('group')->options($this->groupOptions())->placeholder('All'),
+                Forms\Components\Select::make('group')
+                    ->options($this->groupOptions())
+                    ->placeholder('All'),
             ])
             ->query(function (Builder $query, array $data): Builder {
                 if (! $data['group']) {
                     return $query;
                 }
 
-                return $query->where('items.group', '=', $data['group']);
+                return $query->whereIn('item_locations.item_id',
+                    Item::whereGroup($data['group'])->pluck('id'));
             })
             ->indicateUsing(function (array $data): ?string {
                 return $data['group'] ? 'Group: '.$data['group'] : null;
@@ -137,14 +140,17 @@ class InventoryStatusReport extends Component implements Tables\Contracts\HasTab
     {
         return Tables\Filters\Filter::make('manufacturer')
             ->form([
-                Forms\Components\Select::make('manufacturer')->options($this->manufacturerOptions())->placeholder('All'),
+                Forms\Components\Select::make('manufacturer')
+                    ->options($this->manufacturerOptions())
+                    ->placeholder('All'),
             ])
             ->query(function (Builder $query, array $data): Builder {
                 if (! $data['manufacturer']) {
                     return $query;
                 }
 
-                return $query->where('items.manufacturer', '=', $data['manufacturer']);
+                return $query->whereIn('item_locations.item_id',
+                    Item::whereManufacturer($data['manufacturer'])->pluck('id'));
             })
             ->indicateUsing(function (array $data): ?string {
                 return $data['manufacturer'] ? 'Manufacturer: '.$data['manufacturer'] : null;
