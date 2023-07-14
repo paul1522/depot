@@ -9,8 +9,9 @@
 
     try {
         $dotenv->load();
-        $dotenv->required(['DEPLOY_PHP_VERSION', 'DEPLOY_TMP',
-            'DEPLOY_SERVER', 'DEPLOY_REPOSITORY', 'DEPLOY_PATH', 'DEPLOY_DATABASE'])->notEmpty();
+        $dotenv->required(['DEPLOY_PHP_VERSION', 'DEPLOY_TMP', 'DEPLOY_SERVER', 'DEPLOY_REPOSITORY', 'DEPLOY_PATH',
+            'DEPLOY_DATABASE', 'DEPLOY_BASILISK_DATABASE', 'DEPLOY_GLUTTONY_DATABASE', 'DEPLOY_MAIL_PASSWORD',
+            'DEPLOY_ENV'])->notEmpty();
     } catch ( Exception $e )  {
         echo $e->getMessage();
     }
