@@ -34,15 +34,21 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
     // Must be public for FilamentExportHeaderAction
     {
         return Transaction::query()
-            ->select('transactions.id', DB::raw('transactions.quantity as transaction_quantity'),
-                'transactions.item_location_id', 'transactions.date', 'transactions.description')
-            ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id');
+            ->select('transactions.id', 'transactions.item_location_id',
+                DB::raw('transactions.quantity as transaction_quantity'),
+                DB::raw('transactions.date as transaction_date'),
+                'item_locations.item_id', 'item_locations.location_id', 'item_locations.condition_id'
+            )
+            ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id')
+            ->join('items', 'items.id', '=', 'item_locations.item_id')
+            ->join('locations', 'locations.id', '=', 'item_locations.location_id')
+            ->join('conditions', 'conditions.id', '=', 'item_locations.condition_id');
     }
 
     protected function getTableColumns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('date')->date()->sortable(),
+            Tables\Columns\TextColumn::make('transaction_date')->date()->sortable(),
             Tables\Columns\TextColumn::make('item_location.item.description')->label('Charter description')->searchable()->sortable(),
             Tables\Columns\TextColumn::make('item_location.item.sbt_item')->label('SBT item prefix')->searchable()->sortable(),
             Tables\Columns\TextColumn::make('item_location.item.key')->label('Charter key')->searchable()->sortable(),
@@ -160,7 +166,7 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
                     return $query;
                 }
 
-                return $query->where('items.group', '=', $data['group']);
+                return $query->where('item_location.item.group', '=', $data['group']);
             })
             ->indicateUsing(function (array $data): ?string {
                 return $data['group'] ? 'Group: '.$data['group'] : null;
@@ -205,11 +211,19 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
     /**
      * @throws Exception
      */
-    public function getLocationTableFilter(): Tables\Filters\SelectFilter
+    public function getLocationTableFilter(): Tables\Filters\Filter
     {
-        return Tables\Filters\SelectFilter::make('location')
-            ->options($this->locationOptions())
-            ->attribute('location.id');
+        return Tables\Filters\Filter::make('location')->form([
+            Forms\Components\Select::make('location')->options($this->locationOptions())->placeholder('All'),
+        ])->query(function (Builder $query, array $data): Builder {
+            if (! $data['location']) {
+                return $query;
+            }
+
+            return $query->where('item_locations.location_id', '=', $data['location']);
+        })->indicateUsing(function (array $data): ?string {
+            return $data['location'] ? 'Location: '.Location::find($data['location'])->name : null;
+        });
     }
 
     private function locationOptions(): array
@@ -220,11 +234,19 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
     /**
      * @throws Exception
      */
-    public function getConditionTableFilter(): Tables\Filters\SelectFilter
+    public function getConditionTableFilter(): Tables\Filters\Filter
     {
-        return Tables\Filters\SelectFilter::make('condition')
-            ->options($this->conditionOptions())
-            ->attribute('condition.id');
+        return Tables\Filters\Filter::make('condition')->form([
+            Forms\Components\Select::make('condition')->options($this->conditionOptions())->placeholder('All'),
+        ])->query(function (Builder $query, array $data): Builder {
+            if (! $data['condition']) {
+                return $query;
+            }
+
+            return $query->where('item_locations.condition_id', '=', $data['condition']);
+        })->indicateUsing(function (array $data): ?string {
+            return $data['condition'] ? 'Condition: '.Condition::find($data['condition'])->name : null;
+        });
     }
 
     private function conditionOptions(): array
