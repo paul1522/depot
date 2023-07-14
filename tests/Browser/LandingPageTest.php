@@ -11,53 +11,28 @@ class LandingPageTest extends DuskTestCase
 {
     use DatabaseMigrations;
 
-    public function testGuestCanSeeLandingPage(): void
+    public function testTitle(): void
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                ->assertPresent('@login-link')
-                ->assertPresent('@register-link')
-                ->assertNotPresent('@catalog-link');
+                ->assertTitle(config('app.name'));
         });
     }
 
-    public function testUserCanSeeLandingPage(): void
-    {
-        User::factory()->create();
-        $this->browse(function (Browser $browser) {
-            $browser->loginAs(User::find(1))
-                ->visit('/')
-                ->assertNotPresent('@login-link')
-                ->assertNotPresent('@register-link')
-                ->assertPresent('@catalog-link');
-        });
-    }
-
-    public function testGuestCanClickLogin(): void
+    public function testGuestRedirect(): void
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
-                ->click('@login-link')
-                ->assertUrlIs(route('login'));
-        });
-    }
-
-    public function testGuestCanClickRegister(): void
-    {
-        $this->browse(function (Browser $browser) {
-            $browser->visit('/')
-                ->click('@register-link')
                 ->assertUrlIs(route('register'));
         });
     }
 
-    public function testUserCanClickCatalog(): void
+    public function testUserRedirect(): void
     {
         User::factory()->create();
         $this->browse(function (Browser $browser) {
             $browser->loginAs(User::find(1))
                 ->visit('/')
-                ->click('@catalog-link')
                 ->assertUrlIs(route('catalog.show'));
         });
     }
