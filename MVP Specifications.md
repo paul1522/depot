@@ -1,11 +1,14 @@
-# Charter Depot Website - Minimum Viable Product Specifications
+# Charter Depot Website version 1.0.0
+
+These specifications will be finalized on Sunday, July 23, 2023. Revisions made after that date will not be included in 
+the first release. *Qui tacet consentire videtur.*
 
 --------------------------------------------------
 
 ## URL/Title - To Be Discussed
 
-- [ ] The URL is https://depot.mpinstrument.com
-- [ ] The title of the website is "Depot"
+- [ ] The URL is https://depot.mpinstrument.com.
+- [ ] The title of the website is "Depot."
 
 --------------------------------------------------
 
@@ -216,5 +219,3 @@ able to register.
 - [ ] Each model has a created_by and updated_by nullable bigint property.
 - [ ] The created_by property is set to the user's id whenever a model is created.
 - [ ] The updated_by property is set to the user's id whenever a model is updated.
-
-### User Activity Report - To Be Discussed
