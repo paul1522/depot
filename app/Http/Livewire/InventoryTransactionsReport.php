@@ -31,8 +31,9 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
     {
         return Transaction::query()
             ->select('transactions.id', 'transactions.item_location_id',
-                DB::raw('transactions.quantity as transaction_quantity'),
                 DB::raw('transactions.date as transaction_date'),
+                DB::raw('transactions.quantity as transaction_quantity'),
+                DB::raw('transactions.description as transaction_description'),
                 'item_locations.item_id', 'item_locations.location_id', 'item_locations.condition_id'
             )
             ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id')
@@ -84,7 +85,7 @@ class InventoryTransactionsReport extends Component implements Tables\Contracts\
             Tables\Columns\TextColumn::make('item_location.location.name')->label('Location')->sortable(),
             Tables\Columns\TextColumn::make('item_location.condition.name')->label('Condition')->sortable(),
             Tables\Columns\TextColumn::make('transaction_quantity')->label('Quantity')->alignRight()->sortable(),
-            Tables\Columns\TextColumn::make('description')->label('Reference')->sortable()->searchable(),
+            Tables\Columns\TextColumn::make('transaction_description')->label('Reference')->sortable()->searchable(),
         ];
     }
 
