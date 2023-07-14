@@ -11,7 +11,7 @@ class LandingPageTest extends DuskTestCase
 {
     use DatabaseMigrations;
 
-    public function testTitle(): void
+    public function testSiteTitleIsCorrect(): void
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
@@ -19,7 +19,7 @@ class LandingPageTest extends DuskTestCase
         });
     }
 
-    public function testGuestRedirect(): void
+    public function testGuestIsRedirectedToRegistrationPage(): void
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/')
@@ -27,7 +27,7 @@ class LandingPageTest extends DuskTestCase
         });
     }
 
-    public function testUserRedirect(): void
+    public function testUserIsRedirectedToCatalogPage(): void
     {
         User::factory()->create();
         $this->browse(function (Browser $browser) {

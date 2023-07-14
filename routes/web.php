@@ -20,7 +20,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::view('/', 'welcome');
+Route::get('/', function () {
+    if (request()->user()) {
+        return redirect(route('catalog.show'));
+    } else {
+        return redirect(route('register'));
+    }
+});
 
 Route::middleware([
     'auth:sanctum',
