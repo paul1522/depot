@@ -36,8 +36,7 @@ class InventoryTransactionsPage extends Pages\Page implements Tables\Contracts\H
         return Transaction::query()
             ->select('transactions.id', DB::raw('transactions.quantity as transaction_quantity'),
                 'transactions.item_location_id', 'transactions.date', 'transactions.description')
-            ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id')
-            ->whereIn('item_locations.location_id', request()->user()->locations->pluck('id'));
+            ->join('item_locations', 'item_locations.id', '=', 'transactions.item_location_id');
     }
 
     protected function getTableColumns(): array
