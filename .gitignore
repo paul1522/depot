@@ -22,3 +22,5 @@ database/data/
 bin/
 
 composer.phar
+
+.env.dusk.local
