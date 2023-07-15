@@ -51,6 +51,7 @@ These specifications will be finalized on Sunday, July 23, 2023. Revisions made 
 ---
 
 - [ ] Has standard pagination
+- [x] Displays "No records found," when empty.
 
 ### Inventory Transactions - To Be Discussed
 
@@ -85,6 +86,40 @@ These specifications will be finalized on Sunday, July 23, 2023. Revisions made 
 ---
 
 - [ ] Has standard pagination
+- [ ] Displays "No records found," when empty.
+
+--------------------------------------------------
+
+### Order Status - To Be Discussed
+
+- [ ] Column : Order # - sortable
+- [ ] Column : Order Date - sortable
+- [ ] Column : Destination Location - sortable
+- [ ] Column : User Email - sortable
+- [ ] Column : Charter item description - searchable, sortable
+- [ ] Column : Quantity ordered - sortable
+- [ ] Column : Quantity shipped - sortable
+- [ ] Column : Order status - sortable, searchable
+
+---
+
+- [ ] Filter 1: Date range - Transaction Date
+- [ ] Filter 2: Dropdown - Destination Location
+- [ ] Filter 3: Dropdown - User Email
+
+---
+
+- [ ] Exports to Excel spreadsheet
+- [ ] Exports to CSV file
+
+---
+
+- [ ] Prints
+
+---
+
+- [ ] Has standard pagination
+- [ ] Displays "No records found," when empty.
 
 --------------------------------------------------
 
@@ -121,6 +156,7 @@ These specifications will be finalized on Sunday, July 23, 2023. Revisions made 
 ---
 
 - [ ] Has standard pagination
+- [ ] Displays "No records found," when empty.
 
 ---
 
@@ -180,6 +216,7 @@ These specifications will be finalized on Sunday, July 23, 2023. Revisions made 
 ---
 
 - [ ] Has standard pagination
+- [ ] Displays "No records found," when empty.
 
 --------------------------------------------------
 

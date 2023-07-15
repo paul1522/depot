@@ -31,12 +31,15 @@
 
                             <x-slot name="content">
                                 <div class="w-60">
-                                <x-dropdown-link href="{{ route('reports.inventory.status') }}">
-                                    {{ __('Inventory Status Report') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link href="{{ route('reports.inventory.transactions') }}">
-                                    {{ __('Inventory Transactions Report') }}
-                                </x-dropdown-link>
+                                    <x-dropdown-link href="{{ route('reports.inventory.status') }}">
+                                        {{ __('Inventory Status Report') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link href="{{ route('reports.inventory.transactions') }}">
+                                        {{ __('Inventory Transactions Report') }}
+                                    </x-dropdown-link>
+                                    <x-dropdown-link href="{{ route('reports.orders.status') }}">
+                                        {{ __('Order Status Report') }}
+                                    </x-dropdown-link>
                                 </div>
                             </x-slot>
                         </x-dropdown>
@@ -186,12 +189,14 @@
                 </div>
             </div>
             <div class="mt-3 space-y-1">
-                <!-- Account Management -->
                 <x-responsive-nav-link href="{{ route('reports.inventory.status') }}" :active="request()->routeIs('reports.inventory.status')">
                     {{ __('Inventory Status') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('reports.inventory.transactions') }}" :active="request()->routeIs('reports.inventory.transactions')">
                     {{ __('Inventory Transactions') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('reports.orders.status') }}" :active="request()->routeIs('reports.inventory.transactions')">
+                    {{ __('Order Status') }}
                 </x-responsive-nav-link>
             </div>
             @if (request()->user()->canAccessFilament())

@@ -11,7 +11,7 @@ class InventoryStatusReportPageTest extends DuskTestCase
 {
     use DatabaseMigrations;
 
-    public function testUserCanSeeInventoryStatusReport(): void
+    public function testUserCanSeeEmptyInventoryStatusReport(): void
     {
         User::factory()->create();
         $this->browse(function (Browser $browser) {
